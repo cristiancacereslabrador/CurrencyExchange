@@ -59,29 +59,20 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: start;
+  justify-content: center;
   min-height: 100vh;
   color: rgb(239, 234, 234);
   text-align: center;
-  background: rgba(0, 0, 0, 0.4); /* Filtro oscuro */
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 0px;
+  background: rgba(0, 0, 0, 0.7); /* Filtro oscuro */
+  padding: 20px;
   /* border-radius: 15px; */
-  margin-top: 0px;
 }
-@media only screen and (max-width: 768px) {
-  app-container {
-    justify-content: center;
-    padding-top: 20px;
-  }
-}
+
 .title {
   font-family: "Orbitron", sans-serif; /* Fuente personalizada para el título */
   font-size: 2.5rem;
   font-weight: 900;
-  margin-bottom: 6px;
+  margin-bottom: 20px;
   color: rgb(6, 164, 6);
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -99,7 +90,7 @@ label {
   font-weight: bold;
   font-size: 1.2rem;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   text-transform: uppercase;
 }
 
@@ -121,7 +112,7 @@ label {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 20px;
   font-size: 1.2rem;
   width: 100%;
   max-width: 400px;

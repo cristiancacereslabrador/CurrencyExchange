@@ -66,7 +66,7 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <h1 className="title">CAMBIO MONEDAS</h1>
+      {/* <h1 className="title">CAMBIO MONEDAS</h1> */}
       <h1 className="title"> BS - USD - COP</h1>
       <div className="form-container">
         <div className="input-group">
@@ -106,7 +106,7 @@ const App = () => {
       </div>
       <div className="creator">
         <p>
-          Created by: <span className="name">Cristian Cáceres</span>
+          Creado por: <span className="name">Cristian Cáceres</span>
         </p>
       </div>
     </div>
