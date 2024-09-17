@@ -111,7 +111,7 @@ const App = () => {
       </div>
       <div className="creator-div">
         <p className="creator">
-          Creador: <span className="name">Cristian Cáceres</span>
+          Creador: <span className="name">CristianCáceres</span>
         </p>
       </div>
     </div>
