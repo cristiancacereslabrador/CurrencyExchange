@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgb(208, 21, 21);
 }
 
 .App-link {
@@ -35,4 +35,74 @@
   to {
     transform: rotate(360deg);
   }
+}
+/* Fuente personalizada para el título y los números */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@900&family=Orbitron&display=swap");
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  background-image: url("/public/background.png"); /* Imagen de fondo */
+  background-size: cover;
+  background-position: center;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: rgb(239, 234, 234);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.7); /* Filtro oscuro */
+  padding: 20px;
+  /* border-radius: 15px; */
+}
+
+.title {
+  font-family: "Orbitron", sans-serif; /* Fuente personalizada para el título */
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  color: #0f27c6; /* Color dorado */
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  text-align: center;
+  font-size: 1.5rem;
+  font-family: "Orbitron", sans-serif; /* Fuente estilo Casio para los números */
+  color: #000;
+  font-weight: bold;
+}
+
+.exchange-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  width: 100%;
+  max-width: 400px;
 }
