@@ -104,6 +104,11 @@ const App = () => {
         <p>1 DÓLAR EQUIVALE A {usdToBs.toFixed(2)} BS</p>
         <p>1 DÓLAR EQUIVALE A {usdToCop.toFixed(2)} COP</p>
       </div>
+      <div className="creator">
+        <p>
+          Created by: <span className="name">Cristian Cáceres</span>
+        </p>
+      </div>
     </div>
   );
 };
