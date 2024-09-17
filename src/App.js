@@ -66,7 +66,7 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <h1 className="title">BS - USD - COP</h1>
+      <h1 className="title">USD - BS - COP</h1>
       <div className="form-container">
         <div className="input-group">
           <label>Bolívar (BS)</label>
