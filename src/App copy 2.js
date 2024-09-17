@@ -66,7 +66,8 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <h1 className="title">BS - USD - COP</h1>
+      {/* <h1 className="title">CAMBIO MONEDAS</h1> */}
+      <h1 className="title"> BS - USD - COP</h1>
       <div className="form-container">
         <div className="input-group">
           <label>Bolívar (BS)</label>
@@ -76,8 +77,6 @@ const App = () => {
             onChange={(e) => handleInputChange(setBs, e.target.value)}
             onFocus={() => handleFocus("bs")}
             className="input"
-            inputMode="numeric" // Indica un teclado numérico en dispositivos móviles
-            pattern="[0-9]*" // Asegura que solo números sean ingresados
           />
         </div>
         <div className="input-group">
@@ -88,8 +87,6 @@ const App = () => {
             onChange={(e) => handleInputChange(setUsd, e.target.value)}
             onFocus={() => handleFocus("usd")}
             className="input"
-            inputMode="numeric" // Indica un teclado numérico en dispositivos móviles
-            pattern="[0-9]*" // Asegura que solo números sean ingresados
           />
         </div>
         <div className="input-group">
@@ -100,8 +97,6 @@ const App = () => {
             onChange={(e) => handleInputChange(setCop, e.target.value)}
             onFocus={() => handleFocus("cop")}
             className="input"
-            inputMode="numeric" // Indica un teclado numérico en dispositivos móviles
-            pattern="[0-9]*" // Asegura que solo números sean ingresados
           />
         </div>
       </div>
