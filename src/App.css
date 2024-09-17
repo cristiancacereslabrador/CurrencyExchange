@@ -83,7 +83,7 @@ body {
   font-weight: 900;
   margin-bottom: 6px;
   color: rgb(6, 164, 6);
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
 }
 
 .form-container {
@@ -101,6 +101,7 @@ label {
   display: block;
   margin-bottom: 6px;
   text-transform: uppercase;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
 }
 
 .input {
@@ -114,7 +115,7 @@ label {
   color: #262626;
   font-weight: 900;
   background-color: rgb(6, 164, 6);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
 }
 
 .exchange-info {
@@ -125,12 +126,13 @@ label {
   font-size: 1.2rem;
   width: 100%;
   max-width: 400px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 .creator p {
   font-size: 1rem; /* Tamaño de fuente para el texto general */
   color: #000; /* Color del texto */
   font-family: "Orbitron", sans-serif;
-  color: rgb(6, 164, 6);
+  color: rgb(255, 255, 255);
 }
 
 .creator .name {
@@ -138,4 +140,5 @@ label {
   font-size: 1.2rem; /* Tamaño de fuente más grande para el nombre */
   font-family: "Orbitron", sans-serif;
   color: rgb(6, 164, 6);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
 }
