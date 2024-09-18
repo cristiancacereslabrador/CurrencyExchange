@@ -135,6 +135,7 @@ label {
   color: rgb(255, 255, 255);
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
   align-items: center; /* Alinea verticalmente los elementos */
+  margin-top: 10px;
 }
 
 .creator .name {
@@ -142,10 +143,12 @@ label {
   font-size: 1rem; /* Tamaño de fuente más grande para el nombre */
   font-family: "Orbitron", sans-serif;
   /* color: rgb(6, 164, 6);
-  text-shadow: 0 4px 8px rgba(137, 137, 137, 0.9); */
-  color: rgb(0, 106, 0); /* Color del texto */
-  text-shadow: 1px 1px 0 rgba(125, 125, 125, 0.5),
-    -1px -1px 0 rgba(255, 255, 255, 0.7), 0 0 8px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 4px 8px rgba(137, 137, 137, 0.9); */
+  color: rgb(4, 118, 4); /* Color del texto */
+  text-shadow: 1px 1px 0 rgba(244, 244, 244, 0.5),
+    -1px -1px 0 rgba(255, 255, 255, 0.7), 0 0 8px rgba(255, 255, 255, 0.9);
+  /* background: rgba(2, 94, 9, 0.3); */
+  border-radius: 5px;
 }
 
 .creator-div {
