@@ -164,7 +164,7 @@ label {
   align-items: center;
   text-decoration: none;
 }
-@media only screen and (max-width: 768px) {
+/* @media only screen and (max-width: 768px) {
   .creator p {
     font-size: 0.7rem; /* Reduce el tamaño de la fuente en dispositivos móviles */
   }
@@ -176,4 +176,4 @@ label {
   .whatsapp-icon {
     font-size: 0.9rem; /* Reduce el tamaño del ícono en móviles */
   }
-}
+} */
