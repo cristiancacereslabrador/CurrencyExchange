@@ -79,7 +79,7 @@ body {
 }
 .title {
   font-family: "Orbitron", sans-serif; /* Fuente personalizada para el título */
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   font-weight: 900;
   margin-bottom: 6px;
   color: rgb(6, 164, 6);
@@ -118,15 +118,17 @@ label {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
 }
 
-.exchange-info {
+.exchange-info p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-top: 5px;
+  margin-bottom: 5px;
   font-size: 1.2rem;
   width: 100%;
   max-width: 400px;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  padding: 0px;
 }
 .creator {
   display: flex;
@@ -136,7 +138,7 @@ label {
 
 .creator p {
   margin-top: 7px; /* Elimina el margen para evitar que se rompa la línea */
-  font-size: 1.2rem; /* Tamaño de fuente para el texto general */
+  /* font-size: 1.2rem;*/
   color: rgb(255, 255, 255); /* Color del texto */
   font-family: "Orbitron", sans-serif;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
@@ -147,8 +149,9 @@ label {
   flex-wrap: nowrap; /* Evita que el texto se rompa en varias líneas */
 }
 .act p {
-  font-weight: 900; /* Hace el texto en negrita */
-  margin-top: 7px; /* Elimina el margen para evitar que se rompa la línea */
+  font-weight: 900;
+  margin-top: 5px;
+  margin-bottom: 5px;
   font-size: 1.2rem; /* Tamaño de fuente para el texto general */
   color: rgb(255, 255, 255); /* Color del texto */
   /* font-family: "Orbitron", sans-serif; */
@@ -171,6 +174,7 @@ label {
   margin-left: 5px;
   /* background: rgba(0, 0, 0, 0.2); */
   border-radius: 10px;
+  text-decoration: none;
 }
 
 .whatsapp-icon {

@@ -10,6 +10,7 @@ const App = () => {
   const [usd, setUsd] = useState("");
   const [focusedField, setFocusedField] = useState(null);
   const [lastUpdate, setLastUpdate] = useState("");
+
   useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
@@ -147,7 +148,7 @@ const App = () => {
       </div>
       <div className="creator">
         <p>
-          &copy; 2024&nbsp;&nbsp;
+          &copy; 2024 &nbsp;&nbsp;
           <a href="https://wa.me/51980675172" className="name">
             Cristian Cáceres
             <i className="fab fa-whatsapp whatsapp-icon"></i>
