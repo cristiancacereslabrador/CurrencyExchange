@@ -113,11 +113,20 @@ const App = () => {
         <p>1 DÓLAR EQUIVALE A {usdToBs.toFixed(2)} BS</p>
         <p>1 DÓLAR EQUIVALE A {usdToCop.toFixed(2)} COP</p>
       </div>
-      <div className="creator">
+      {/* <div className="creator">
         <p className="">
           &copy; 2024{" "}
           <a href="https://wa.me/51980675172" className="name">
             Cristian Cáceres <i className="fab fa-whatsapp"></i>
+          </a>
+        </p>
+      </div> */}
+      <div className="creator">
+        <p>
+          &copy; 2024
+          <a href="https://wa.me/51980675172" className="name">
+            Cristian Cáceres
+            <i className="fab fa-whatsapp whatsapp-icon"></i>
           </a>
         </p>
       </div>
