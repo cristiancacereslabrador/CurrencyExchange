@@ -77,7 +77,7 @@ const App = () => {
   useEffect(() => {
     if (focusedField === "cop" && usdToBs > 0 && usdToCop > 0) {
       const copValue = parseInt(cop) || 0;
-      setUsd((copValue / usdToCop).toFixed(0));
+      setUsd((copValue / usdToCop).toFixed(2));
       setBs(((copValue / usdToCop) * usdToBs).toFixed(2));
     }
   }, [cop, usdToBs, usdToCop, focusedField]);
