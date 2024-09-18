@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./App.css";
+import "./App.css"; // Importa el archivo CSS
 
 const App = () => {
   const [usdToCop, setUsdToCop] = useState(0);
@@ -9,7 +9,8 @@ const App = () => {
   const [bs, setBs] = useState("");
   const [usd, setUsd] = useState("");
   const [focusedField, setFocusedField] = useState(null);
-  const [lastUpdate, setLastUpdate] = useState("");
+  const [lastUpdated, setLastUpdated] = useState("");
+
   useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
@@ -19,41 +20,17 @@ const App = () => {
 
         const copOficial = copResponse.data.rates.COP;
         const copChanged = copOficial - copOficial * 0.06;
-        setUsdToCop(copChanged); // Tu lógica personalizada
+        setUsdToCop(copChanged);
 
         const bsResponse = await axios.get(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
         setUsdToBs(bsResponse.data.rates.VES);
 
-        // Obtener la fecha de la API
-        const apiDate = copResponse.data.date;
-
-        // Crear un array con los nombres de los meses
-        const meses = [
-          "enero",
-          "febrero",
-          "marzo",
-          "abril",
-          "mayo",
-          "junio",
-          "julio",
-          "agosto",
-          "septiembre",
-          "octubre",
-          "noviembre",
-          "diciembre"
-        ];
-
-        // Separar año, mes y día
-        const [year, month, day] = apiDate.split("-");
-
-        const formattedDate = `${parseInt(day)} de ${
-          meses[parseInt(month) - 1]
-        }`;
-
-        // Establecer la fecha formateada
-        setLastUpdate(formattedDate);
+        // Obtener la fecha de la última actualización
+        const lastUpdatedDate = copResponse.data.date;
+        console.log("copResponse.data", copResponse.data.date);
+        setLastUpdated(lastUpdatedDate);
       } catch (error) {
         console.error("Error fetching exchange rates", error);
       }
@@ -95,6 +72,30 @@ const App = () => {
     if (field === "usd") setUsd("");
     if (field === "bs") setBs("");
     if (field === "cop") setCop("");
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const monthNames = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre"
+    ];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${day} de ${month}`;
+    // return `${day} de ${month} de ${year}`;
   };
 
   return (
@@ -142,16 +143,14 @@ const App = () => {
         <p>1 DÓLAR EQUIVALE A {usdToBs.toFixed(2)} BS</p>
         <p>1 DÓLAR EQUIVALE A {usdToCop.toFixed(2)} COP</p>
       </div>
-      <div className="act">
-        <p>Actualizado al {lastUpdate}</p>
-      </div>
       <div className="creator">
         <p>
-          &copy; 2024&nbsp;&nbsp;
+          Actualizado el {formatDate(lastUpdated)}&nbsp;&nbsp; <br />
           <a href="https://wa.me/51980675172" className="name">
-            Cristian Cáceres
             <i className="fab fa-whatsapp whatsapp-icon"></i>
+            &nbsp;&nbsp;Cristian Cáceres&nbsp;&nbsp;
           </a>
+          &copy; 2024
         </p>
       </div>
     </div>

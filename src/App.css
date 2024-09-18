@@ -141,10 +141,24 @@ label {
   font-family: "Orbitron", sans-serif;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
   display: flex;
+  flex-direction: row;
+  align-items: center;
   align-items: center; /* Alinea verticalmente los elementos */
   flex-wrap: nowrap; /* Evita que el texto se rompa en varias líneas */
 }
-
+.act p {
+  font-weight: 900; /* Hace el texto en negrita */
+  margin-top: 7px; /* Elimina el margen para evitar que se rompa la línea */
+  font-size: 1.2rem; /* Tamaño de fuente para el texto general */
+  color: rgb(255, 255, 255); /* Color del texto */
+  /* font-family: "Orbitron", sans-serif; */
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-items: center; /* Alinea verticalmente los elementos */
+  flex-wrap: nowrap; /* Evita que el texto se rompa en varias líneas */
+}
 .creator .name {
   font-weight: 900; /* Hace el texto en negrita */
   font-size: 1.4rem; /* Tamaño de fuente más grande para el nombre */
