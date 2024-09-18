@@ -144,8 +144,8 @@ label {
   /* color: rgb(6, 164, 6);
   text-shadow: 0 4px 8px rgba(137, 137, 137, 0.9); */
   color: rgb(0, 106, 0); /* Color del texto */
-  text-shadow: 1px 1px 0 rgba(125, 125, 125, 1), -1px -1px 0 rgba(0, 0, 0, 0.7),
-    0 0 8px rgba(112, 112, 112, 0.9);
+  text-shadow: 1px 1px 0 rgba(125, 125, 125, 0.5),
+    -1px -1px 0 rgba(255, 255, 255, 0.7), 0 0 8px rgba(0, 0, 0, 0.9);
 }
 
 .creator-div {
