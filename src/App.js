@@ -87,7 +87,7 @@ const App = () => {
   useEffect(() => {
     if (focusedField === "bs" && usdToBs > 0 && usdToCop > 0) {
       const bsValue = parseInt(bs) || 0;
-      setUsd((bsValue / usdToBs).toFixed(0));
+      setUsd((bsValue / usdToBs).toFixed(2));
       setCop(((bsValue / usdToBs) * usdToCop).toFixed(2));
     }
   }, [bs, usdToBs, usdToCop, focusedField]);
