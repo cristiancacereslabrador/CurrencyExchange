@@ -18,7 +18,7 @@ const App = () => {
         );
 
         const copOficial = copResponse.data.rates.COP;
-        const copChanged = copOficial - copOficial * 0.05;
+        const copChanged = copOficial - copOficial * 0.06;
         // setUsdToCop(copOficial); //ORI
         setUsdToCop(copChanged); //MINE
         const bsResponse = await axios.get(

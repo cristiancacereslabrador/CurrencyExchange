@@ -138,7 +138,7 @@ label {
 
 .creator .name {
   font-weight: bold; /* Hace el texto en negrita */
-  font-size: 0.9rem; /* Tamaño de fuente más grande para el nombre */
+  font-size: 1.2rem; /* Tamaño de fuente más grande para el nombre */
   font-family: "Orbitron", sans-serif;
   color: rgb(6, 164, 6);
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
