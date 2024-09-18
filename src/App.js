@@ -115,7 +115,10 @@ const App = () => {
       </div>
       <div className="creator-div">
         <p className="creator">
-          Creador: <span className="name">Cristian Cáceres</span>
+          Creado por:{" "}
+          <a href="https://wa.me/51980675172" className="name">
+            Cristian Cáceres
+          </a>
         </p>
       </div>
     </div>
