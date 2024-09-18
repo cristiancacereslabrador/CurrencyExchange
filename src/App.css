@@ -129,12 +129,13 @@ label {
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 .creator p {
-  font-size: 0.8rem; /* Tamaño de fuente para el texto general */
+  font-size: 1rem; /* Tamaño de fuente para el texto general */
   color: #000; /* Color del texto */
   font-family: "Orbitron", sans-serif;
   color: rgb(255, 255, 255);
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
   margin: 0;
+  align-items: center; /* Alinea verticalmente los elementos */
 }
 
 .creator .name {
@@ -146,6 +147,7 @@ label {
   color: rgb(0, 106, 0); /* Color del texto */
   text-shadow: 1px 1px 0 rgba(125, 125, 125, 1), -1px -1px 0 rgba(0, 0, 0, 0.7),
     0 0 8px rgba(112, 112, 112, 0.9);
+  background: rgba(112, 112, 112, 0.3);
 }
 
 .creator-div {
@@ -154,7 +156,7 @@ label {
 }
 
 .whatsapp-icon {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: rgb(6, 164, 6);
   margin-left: 8px;
   display: flex;
