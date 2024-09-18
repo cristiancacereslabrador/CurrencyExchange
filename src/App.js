@@ -10,6 +10,7 @@ const App = () => {
   const [usd, setUsd] = useState("");
   const [focusedField, setFocusedField] = useState(null);
   const [lastUpdate, setLastUpdate] = useState("");
+  const [actYear, setActYear] = useState(""); //MINE
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -48,7 +49,7 @@ const App = () => {
 
         // Separar año, mes y día
         const [year, month, day] = apiDate.split("-");
-
+        setActYear(year); //MINE
         const formattedDate = `${parseInt(day)} de ${
           meses[parseInt(month) - 1]
         }`;
@@ -148,7 +149,7 @@ const App = () => {
       </div>
       <div className="creator">
         <p>
-          &copy; 2024 &nbsp;&nbsp;
+          &copy; {actYear} &nbsp;&nbsp;
           <a href="https://wa.me/51980675172" className="name">
             Cristian Cáceres
             <i className="fab fa-whatsapp whatsapp-icon"></i>
