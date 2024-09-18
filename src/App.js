@@ -16,7 +16,11 @@ const App = () => {
         const copResponse = await axios.get(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
-        setUsdToCop(copResponse.data.rates.COP);
+
+        const copOficial = copResponse.data.rates.COP;
+        const copChanged = copOficial - copOficial * 0.05;
+        // setUsdToCop(copOficial); //ORI
+        setUsdToCop(copChanged); //MINE
         const bsResponse = await axios.get(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
@@ -111,7 +115,7 @@ const App = () => {
       </div>
       <div className="creator-div">
         <p className="creator">
-          Creador: <span className="name">CristianCáceres</span>
+          Creador: <span className="name">Cristian Cáceres</span>
         </p>
       </div>
     </div>
