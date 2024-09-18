@@ -136,7 +136,7 @@ label {
 
 .creator p {
   margin-top: 7px; /* Elimina el margen para evitar que se rompa la línea */
-  font-size: 1rem; /* Tamaño de fuente para el texto general */
+  font-size: 1.2rem; /* Tamaño de fuente para el texto general */
   color: rgb(255, 255, 255); /* Color del texto */
   font-family: "Orbitron", sans-serif;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
@@ -147,17 +147,20 @@ label {
 
 .creator .name {
   font-weight: 900; /* Hace el texto en negrita */
-  font-size: 1.2rem; /* Tamaño de fuente más grande para el nombre */
+  font-size: 1.4rem; /* Tamaño de fuente más grande para el nombre */
   font-family: "Orbitron", sans-serif;
   color: rgb(6, 164, 6); /* Color del texto */
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 1), -1px -1px 0 rgba(0, 0, 0, 0.7);
+  text-shadow: 2px 2px 0 rgba(152, 152, 152, 0.5),
+    -2px -2px 0 rgba(0, 0, 0, 0.7);
   display: inline-flex; /* Asegura que el texto y el ícono se alineen en una sola línea */
   align-items: center; /* Alinea verticalmente el texto y el ícono */
   margin-left: 5px;
+  /* background: rgba(0, 0, 0, 0.2); */
+  border-radius: 10px;
 }
 
 .whatsapp-icon {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: rgb(6, 164, 6);
   margin-left: 8px;
   display: inline-flex; /* Asegura que el ícono se mantenga en línea con el texto */
