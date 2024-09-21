@@ -149,7 +149,7 @@ const App = () => {
       </div>
       <div className="creator">
         <p>
-          &copy; {actYear} &nbsp;&nbsp;
+          &copy; {actYear} &nbsp;
           <a href="https://wa.me/51980675172" className="name">
             Cristian Cáceres
             <i className="fab fa-whatsapp whatsapp-icon"></i>
