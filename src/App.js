@@ -1,118 +1,140 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./App.css";
 
 const App = () => {
+  /* ─────────────  ESTADO PRINCIPAL  ───────────── */
   const [usdToCop, setUsdToCop] = useState(0);
   const [usdToBs, setUsdToBs] = useState(0);
+
+  const [amountBs, setAmountBs] = useState(""); // Monto a cobrar
   const [cop, setCop] = useState("");
-  const [bs, setBs] = useState("");
   const [usd, setUsd] = useState("");
+  const [bs,  setBs]  = useState("");
+
   const [focusedField, setFocusedField] = useState(null);
-  const [lastUpdate, setLastUpdate] = useState("");
-  const [actYear, setActYear] = useState(""); //MINE
+  const [lastUpdate, setLastUpdate]     = useState("");
+  const [actYear, setActYear]           = useState("");
 
+  /* ─────────────  OBTENER TIPOS DE CAMBIO  ───────────── */
   useEffect(() => {
-    const fetchExchangeRates = async () => {
+    (async () => {
       try {
-        const copResponse = await axios.get(
+        const { data } = await axios.get(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
 
-        const copOficial = copResponse.data.rates.COP;
-        const copChanged = copOficial - copOficial * 0.06;
-        setUsdToCop(copChanged); // Tu lógica personalizada
+        // Descuento 6 % “casa de cambio” sobre COP
+        setUsdToCop(data.rates.COP * 0.94);
+        setUsdToBs(data.rates.VES);
 
-        const bsResponse = await axios.get(
-          "https://api.exchangerate-api.com/v4/latest/USD"
-        );
-        setUsdToBs(bsResponse.data.rates.VES);
-
-        // Obtener la fecha de la API
-        const apiDate = copResponse.data.date;
-
-        // Crear un array con los nombres de los meses
+        const [y, m, d] = data.date.split("-");
+        setActYear(y);
         const meses = [
-          "enero",
-          "febrero",
-          "marzo",
-          "abril",
-          "mayo",
-          "junio",
-          "julio",
-          "agosto",
-          "septiembre",
-          "octubre",
-          "noviembre",
-          "diciembre"
+          "enero","febrero","marzo","abril","mayo","junio",
+          "julio","agosto","septiembre","octubre","noviembre","diciembre"
         ];
-
-        // Separar año, mes y día
-        const [year, month, day] = apiDate.split("-");
-        setActYear(year); //MINE
-        const formattedDate = `${parseInt(day)} de ${
-          meses[parseInt(month) - 1]
-        }`;
-
-        // Establecer la fecha formateada
-        setLastUpdate(formattedDate);
-      } catch (error) {
-        console.error("Error fetching exchange rates", error);
+        setLastUpdate(`${parseInt(d)} de ${meses[parseInt(m) - 1]}`);
+      } catch (err) {
+        console.error("Error fetching exchange rates:", err);
       }
-    };
-    fetchExchangeRates();
+    })();
   }, []);
 
-  const handleInputChange = (setter, value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    setter(numericValue);
-  };
+  /* ─────────────  UTILIDADES INPUT  ───────────── */
+  const sanitize = (v) =>
+    v
+      .replace(/[^0-9.]/g, "")           // solo dígitos y punto
+      .replace(/^(\d*\.\d{0,2}).*$/, "$1") // máx. 2 decimales
+      .replace(/^0+(?=\d)/, "");         // sin ceros a la izquierda
 
-  useEffect(() => {
-    if (focusedField === "usd" && usdToBs > 0 && usdToCop > 0) {
-      const usdValue = parseInt(usd) || 0;
-      setBs((usdValue * usdToBs).toFixed(2));
-      setCop((usdValue * usdToCop).toFixed(2));
-    }
-  }, [usd, usdToBs, usdToCop, focusedField]);
-
-  useEffect(() => {
-    if (focusedField === "cop" && usdToBs > 0 && usdToCop > 0) {
-      const copValue = parseInt(cop) || 0;
-      setUsd((copValue / usdToCop).toFixed(2));
-      setBs(((copValue / usdToCop) * usdToBs).toFixed(2));
-    }
-  }, [cop, usdToBs, usdToCop, focusedField]);
-
-  useEffect(() => {
-    if (focusedField === "bs" && usdToBs > 0 && usdToCop > 0) {
-      const bsValue = parseInt(bs) || 0;
-      setUsd((bsValue / usdToBs).toFixed(2));
-      setCop(((bsValue / usdToBs) * usdToCop).toFixed(2));
-    }
-  }, [bs, usdToBs, usdToCop, focusedField]);
+  const handleChange = (setter) => (e) => setter(sanitize(e.target.value));
 
   const handleFocus = (field) => {
     setFocusedField(field);
     if (field === "usd") setUsd("");
-    if (field === "bs") setBs("");
     if (field === "cop") setCop("");
+    if (field === "bs")  setBs("");
   };
 
+  /* ─────────────  AUTORRELLENO DE DIVISAS  ───────────── */
+  useEffect(() => {
+    if (!focusedField || usdToBs === 0 || usdToCop === 0) return;
+
+    const current = parseFloat(
+      { usd, cop, bs }[focusedField] || "0"
+    );
+
+    if (focusedField === "usd") {
+      setBs ((current * usdToBs ).toFixed(2));
+      setCop((current * usdToCop).toFixed(2));
+    }
+    if (focusedField === "cop") {
+      const usdCalc = current / usdToCop;
+      setUsd(usdCalc.toFixed(2));
+      setBs ((usdCalc * usdToBs).toFixed(2));
+    }
+    if (focusedField === "bs") {
+      const usdCalc = current / usdToBs;
+      setUsd(usdCalc.toFixed(2));
+      setCop((usdCalc * usdToCop).toFixed(2));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usd, cop, bs, focusedField, usdToBs, usdToCop]);
+
+  /* ─────────────  CÁLCULO TOTAL & VUELTO  ───────────── */
+  const { totalBs, changeBs } = useMemo(() => {
+    const numUsd    = parseFloat(usd)    || 0;
+    const numCop    = parseFloat(cop)    || 0;
+    const numBs     = parseFloat(bs)     || 0;
+    const numAmount = parseFloat(amountBs) || 0;
+
+    const usdBs = numUsd * usdToBs;
+    const copBs = (numCop / usdToCop) * usdToBs;
+
+    const total  = usdBs + copBs + numBs;
+    const change = total - numAmount;
+
+    return {
+      totalBs : total.toFixed(2),
+      changeBs: change.toFixed(2)
+    };
+  }, [usd, cop, bs, amountBs, usdToBs, usdToCop]);
+
+  /* ─────────────  RENDER  ───────────── */
   return (
     <div className="app-container">
       <h1 className="title">USD - BS - COP</h1>
+
+      {/* Monto a cobrar */}
       <div className="form-container">
-        <div className="input-group">
-          <label>Bolívar (BS)</label>
+        <div className="input-group highlight">
+          <label>Monto a cobrar (Bs)</label>
           <input
             type="text"
-            value={bs}
-            onChange={(e) => handleInputChange(setBs, e.target.value)}
-            onFocus={() => handleFocus("bs")}
+            value={amountBs}
+            onChange={handleChange(setAmountBs)}
             className="input"
-            inputMode="numeric"
-            pattern="[0-9]*"
+            inputMode="decimal"
+            step="0.01"
+            placeholder="0.00"
+          />
+        </div>
+      </div>
+
+      {/* Pagos del cliente */}
+      <div className="form-container">
+        <div className="input-group">
+          <label>Peso Colombiano (COP)</label>
+          <input
+            type="text"
+            value={cop}
+            onChange={handleChange(setCop)}
+            onFocus={() => handleFocus("cop")}
+            className="input"
+            inputMode="decimal"
+            step="0.01"
+            placeholder="0.00"
           />
         </div>
         <div className="input-group">
@@ -120,39 +142,57 @@ const App = () => {
           <input
             type="text"
             value={usd}
-            onChange={(e) => handleInputChange(setUsd, e.target.value)}
+            onChange={handleChange(setUsd)}
             onFocus={() => handleFocus("usd")}
             className="input"
-            inputMode="numeric"
-            pattern="[0-9]*"
+            inputMode="decimal"
+            step="0.01"
+            placeholder="0.00"
           />
         </div>
         <div className="input-group">
-          <label>Peso Colombiano (COP)</label>
+          <label>Bolívar (Bs)</label>
           <input
             type="text"
-            value={cop}
-            onChange={(e) => handleInputChange(setCop, e.target.value)}
-            onFocus={() => handleFocus("cop")}
+            value={bs}
+            onChange={handleChange(setBs)}
+            onFocus={() => handleFocus("bs")}
             className="input"
-            inputMode="numeric"
-            pattern="[0-9]*"
+            inputMode="decimal"
+            step="0.01"
+            placeholder="0.00"
           />
         </div>
       </div>
-      <div className="exchange-info">
-        <p>1 DÓLAR EQUIVALE A {usdToBs.toFixed(2)} BS</p>
-        <p>1 DÓLAR EQUIVALE A {usdToCop.toFixed(2)} COP</p>
+
+      {/* Resultados */}
+      <div className="form-container">
+        <div className="input-group">
+          <label>Total recibido (Bs)</label>
+          <input className="input" value={totalBs} readOnly />
+        </div>
+        <div className="input-group">
+          <label>{changeBs >= 0 ? "Vuelto (Bs)" : "Faltante (Bs)"}</label>
+          <input className="input" value={Math.abs(changeBs)} readOnly />
+        </div>
       </div>
+
+      {/* Info de cambio */}
+      <div className="exchange-info">
+        <p>1 USD = {usdToBs.toFixed(2)} BS</p>
+        <p>1 USD = {usdToCop.toFixed(2)} COP</p>
+      </div>
+
+      {/* Fecha y footer */}
       <div className="act">
         <p>Actualizado al {lastUpdate}</p>
       </div>
       <div className="creator">
         <p>
-          &copy; {actYear} &nbsp;
+          &copy; {actYear}&nbsp;
           <a href="https://wa.me/51980675172" className="name">
-            Cristian Cáceres
-            <i className="fab fa-whatsapp whatsapp-icon"></i>
+            Cristian Cáceres&nbsp;
+            <i className="fab fa-whatsapp whatsapp-icon" />
           </a>
         </p>
       </div>
