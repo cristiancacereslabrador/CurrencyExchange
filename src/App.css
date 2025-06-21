@@ -186,3 +186,32 @@ label {
   font-weight: 900;
   border: 2px solid #0ab7d2;
 }
+/* Campo “tasa COP” editable en línea */
+.rate-input {
+  width: 90px;
+  padding: 4px;
+  margin: 0 4px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  color: #262626;
+  background-color: rgb(6, 164, 6);
+  border: 1px solid #333;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Dos cajas en línea (valor ingresado + equivalente en Bs) */
+.dual-input {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.dual-input .input {
+  width: 50%;
+}
+.input.secondary {
+  opacity: 0.9;          /* solo informativo */
+  cursor: default;
+}
