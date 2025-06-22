@@ -105,7 +105,7 @@ const bsResponse = await axios.get(
   /* ─────────── RENDER ─────────── */
   return (
     <div className="app-container">
-      <h1 className="title">Calculadora PESOS · USD · Bs</h1>
+      <h1 className="title">COBRO COP·USD·BS</h1>
 
       {/* Monto a cobrar */}
       <div className="form-container">
