@@ -2,228 +2,213 @@ import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./App.css";
 
+/* --------------------------------------------------
+   Utilidades de formato: miles con punto y decimales con coma
+-------------------------------------------------- */
+const format = (n) =>
+  new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n);
+
+const cleanNumber = (v) =>
+  v
+    .replace(/[^0-9.,]/g, "")
+    .replace(/,/g, ".")
+    .replace(/^(\d*\.\d{0,2}).*$/, "$1")
+    .replace(/^0+(?=\d)/, "");
+
 const App = () => {
-  /* ─────────────  ESTADO PRINCIPAL  ───────────── */
-  const [usdToCop, setUsdToCop] = useState("0"); // ← string para que <input> lo muestre
-  const [usdToBs,  setUsdToBs]  = useState(0);
+  /* ─────────── ESTADO ─────────── */
+  const [usdToPesos, setUsdToPesos]   = useState("0");  // 1 USD ⇒ PESOS
+  const [bsPer1kPesos, setBsPer1k]   = useState("27"); // 1000 PESOS ⇒ Bs
+const [usdToBs, setUsdToBs] = useState(0);
+  const [amountPesos, setAmountPesos] = useState("");  // monto a cobrar
+  const [pesos, setPesos]             = useState("");  // pago en PESOS
+  const [usd,   setUsd]               = useState("");  // pago en USD
+  const [bs,    setBs]                = useState("");  // pago en Bs
 
-  const [amountBs, setAmountBs] = useState("");   // monto a cobrar
-  const [cop, setCop] = useState("");
-  const [usd, setUsd] = useState("");
-  const [bs,  setBs]  = useState("");
+  const [lastUpdate, setLastUpdate]   = useState("");
+  const [actYear, setActYear]         = useState("");
 
-  const [focusedField, setFocusedField] = useState(null);
-  const [lastUpdate, setLastUpdate]     = useState("");
-  const [actYear,   setActYear]         = useState("");
-
-  /* ─────────────  OBTENER TIPOS DE CAMBIO  ───────────── */
+  /* ─────────── OBTENER TASA INICIAL ─────────── */
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
+        // sin comisión de casa de cambio para claridad -> puedes ajustar
+        setUsdToPesos(data.rates.COP.toFixed(2));
 
-        // COP con 6 % de comisión
-        setUsdToCop((data.rates.COP * 0.94).toFixed(2));
-        setUsdToBs(data.rates.VES);
+const bsResponse = await axios.get(
+          "https://api.exchangerate-api.com/v4/latest/USD"
+        );
+        setUsdToBs(bsResponse.data.rates.VES);
+
 
         const [y, m, d] = data.date.split("-");
         setActYear(y);
         const meses = [
-          "enero","febrero","marzo","abril","mayo","junio",
-          "julio","agosto","septiembre","octubre","noviembre","diciembre"
+          "enero","febrero","marzo","abril","mayo","junio","julio",
+          "agosto","septiembre","octubre","noviembre","diciembre"
         ];
         setLastUpdate(`${parseInt(d)} de ${meses[parseInt(m) - 1]}`);
       } catch (err) {
-        console.error("Error fetching exchange rates:", err);
+        console.error("Error obteniendo tasa:", err);
       }
     })();
   }, []);
 
-  /* ─────────────  UTILIDADES INPUT  ───────────── */
-  const sanitize = (v) =>
-    v
-      .replace(/[^0-9.]/g, "")
-      .replace(/^(\d*\.\d{0,2}).*$/, "$1")
-      .replace(/^0+(?=\d)/, "");
+  /* ─────────── HANDLER GENÉRICO ─────────── */
+  const handle = (setter) => (e) => setter(cleanNumber(e.target.value));
 
-  const handleChange      = (setter) => (e) => setter(sanitize(e.target.value));
-  const handleRateChange  = (e)    => setUsdToCop(sanitize(e.target.value));
-  const handleFocus = (field) => {
-    setFocusedField(field);
-    if (field === "usd") setUsd("");
-    if (field === "cop") setCop("");
-    if (field === "bs")  setBs("");
-  };
+  /* ─────────── TASA USD → Bs DERIVADA ─────────── */
+  const usdToBsRate = useMemo(() => {
+    const rUsdPesos = parseFloat(usdToPesos) || 0;
+    const rBs1k     = parseFloat(bsPer1kPesos) || 0;
+    return rUsdPesos && rBs1k ? (rUsdPesos * rBs1k) / 1000 : 0;
+  }, [usdToPesos, bsPer1kPesos]);
 
-  /* ─────────────  AUTORRELLENO DE DIVISAS  ───────────── */
-  useEffect(() => {
-    if (!focusedField || usdToBs === 0 || parseFloat(usdToCop) === 0) return;
-
-    const current = parseFloat({ usd, cop, bs }[focusedField] || "0");
-
-    if (focusedField === "usd") {
-      setBs ((current * usdToBs ).toFixed(2));
-      setCop((current * parseFloat(usdToCop)).toFixed(2));
-    }
-    if (focusedField === "cop") {
-      const usdCalc = current / parseFloat(usdToCop);
-      setUsd(usdCalc.toFixed(2));
-      setBs ((usdCalc * usdToBs).toFixed(2));
-    }
-    if (focusedField === "bs") {
-      const usdCalc = current / usdToBs;
-      setUsd(usdCalc.toFixed(2));
-      setCop((usdCalc * parseFloat(usdToCop)).toFixed(2));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [usd, cop, bs, focusedField, usdToBs, usdToCop]);
-
-  /* ─────────────  CÁLCULO TOTAL, VUELTO Y EQUIVALENCIAS  ───────────── */
+  /* ─────────── CÁLCULOS ─────────── */
   const {
-    totalBs,
-    changeBs,
-    usdBsDisplay,
-    copBsDisplay
+    usdPesosStr,
+    bsPesosStr,
+    totalPesosStr,
+    faltanteStr,
+    vueltoStr,
   } = useMemo(() => {
-    const numUsd     = parseFloat(usd) || 0;
-    const numCop     = parseFloat(cop) || 0;
-    const numBs      = parseFloat(bs)  || 0;
-    const numAmount  = parseFloat(amountBs) || 0;
-    const rateCop    = parseFloat(usdToCop) || 1;           // evita /0
+    const rUsdPesos = parseFloat(usdToPesos)   || 0;
+    const rBs1k     = parseFloat(bsPer1kPesos) || 1;
 
-    const usdBs = numUsd * usdToBs;
-    const copBs = (numCop / rateCop) * usdToBs;
+    const usdVal    = parseFloat(usd.replace(/,/g, '.'))   || 0;
+    const pesosVal  = parseFloat(pesos.replace(/,/g, '.')) || 0;
+    const bsVal     = parseFloat(bs.replace(/,/g, '.'))    || 0;
+    const amountVal = parseFloat(amountPesos.replace(/,/g, '.')) || 0;
 
-    const total  = usdBs + copBs + numBs;
-    const change = total - numAmount;
+    const usdPesos = usdVal * rUsdPesos;
+    const bsPesos  = (bsVal / rBs1k) * 1000;
+
+    const total    = pesosVal + usdPesos + bsPesos;
+    const falt     = Math.max(0, amountVal - total);
+    const vuelto   = Math.max(0, total - amountVal);
 
     return {
-      totalBs      : total.toFixed(2),
-      changeBs     : change.toFixed(2),
-      usdBsDisplay : usdBs.toFixed(2),
-      copBsDisplay : copBs.toFixed(2)
+      usdPesosStr   : format(usdPesos),
+      bsPesosStr    : format(bsPesos),
+      totalPesosStr : format(total),
+      faltanteStr   : format(falt),
+      vueltoStr     : format(vuelto),
     };
-  }, [usd, cop, bs, amountBs, usdToBs, usdToCop]);
+  }, [usd, pesos, bs, amountPesos, usdToPesos, bsPer1kPesos]);
 
-  /* ─────────────  RENDER  ───────────── */
+  /* ─────────── RENDER ─────────── */
   return (
     <div className="app-container">
-      <h1 className="title">USD - BS - COP</h1>
+      <h1 className="title">Calculadora PESOS · USD · Bs</h1>
 
       {/* Monto a cobrar */}
       <div className="form-container">
         <div className="input-group highlight">
-          <label>Monto a cobrar (Bs)</label>
+          <label>Monto a cobrar (PESOS)</label>
           <input
+            className="input low"
             type="text"
-            value={amountBs}
-            onChange={handleChange(setAmountBs)}
-            className="input"
-            inputMode="decimal"
-            step="0.01"
-            placeholder="0.00"
+            value={amountPesos}
+            onChange={handle(setAmountPesos)}
+            placeholder="0,00"
           />
         </div>
       </div>
 
-      {/* Pagos del cliente */}
+      {/* Pagos */}
       <div className="form-container">
-        {/* COP */}
+        {/* PESOS */}
         <div className="input-group">
-          <label>Peso Colombiano (COP)</label>
-          <div className="dual-input">
-            <input
-              type="text"
-              value={cop}
-              onChange={handleChange(setCop)}
-              onFocus={() => handleFocus("cop")}
-              className="input"
-              inputMode="decimal"
-              step="0.01"
-              placeholder="0.00"
-            />
-            <input
-              className="input secondary"
-              value={copBsDisplay}
-              readOnly
-              tabIndex={-1}
-            />
-          </div>
+          <label>Pesos (PESOS)</label>
+          <input
+            className="input low"
+            type="text"
+            value={pesos}
+            onChange={handle(setPesos)}
+            placeholder="0,00"
+          />
         </div>
+
         {/* USD */}
         <div className="input-group">
           <label>Dólar (USD)</label>
-          <div className="dual-input">
+          <div className="input-with-label">
             <input
+              className="input low"
               type="text"
               value={usd}
-              onChange={handleChange(setUsd)}
-              onFocus={() => handleFocus("usd")}
-              className="input"
-              inputMode="decimal"
-              step="0.01"
-              placeholder="0.00"
+              onChange={handle(setUsd)}
+              placeholder="0,00"
             />
-            <input
-              className="input secondary"
-              value={usdBsDisplay}
-              readOnly
-              tabIndex={-1}
-            />
+            <div className="converted-box">{usdPesosStr} PESOS</div>
           </div>
         </div>
-        {/* BS */}
+
+        {/* Bs */}
         <div className="input-group">
           <label>Bolívar (Bs)</label>
-          <input
-            type="text"
-            value={bs}
-            onChange={handleChange(setBs)}
-            onFocus={() => handleFocus("bs")}
-            className="input"
-            inputMode="decimal"
-            step="0.01"
-            placeholder="0.00"
-          />
+          <div className="input-with-label">
+            <input
+              className="input low"
+              type="text"
+              value={bs}
+              onChange={handle(setBs)}
+              placeholder="0,00"
+            />
+            <div className="converted-box">{bsPesosStr} PESOS</div>
+          </div>
         </div>
       </div>
 
       {/* Resultados */}
       <div className="form-container">
         <div className="input-group">
-          <label>Total recibido (Bs)</label>
-          <input className="input" value={totalBs} readOnly tabIndex={-1} />
+          <label>Total recibido (PESOS)</label>
+          <input className="input secondary low" value={totalPesosStr} readOnly />
         </div>
         <div className="input-group">
-          <label>{changeBs >= 0 ? "Vuelto (Bs)" : "Faltante (Bs)"}</label>
-          <input
-            className="input"
-            value={Math.abs(changeBs)}
-            readOnly
-            tabIndex={-1}
-          />
+          <label>Faltante (PESOS)</label>
+          <input className="input secondary low" value={faltanteStr} readOnly />
+        </div>
+        <div className="input-group">
+          <label>Vuelto (PESOS)</label>
+          <input className="input secondary low" value={vueltoStr} readOnly />
         </div>
       </div>
 
-      {/* Tipos de cambio */}
-      <div className="exchange-info">
-        <p>1 USD = {usdToBs.toFixed(2)} BS</p>
-        <p>
-          1 USD =
-          <input
-            className="rate-input"
-            value={usdToCop}
-            onChange={handleRateChange}
-            inputMode="decimal"
-            step="0.01"
-          />
-          COP
-        </p>
-      </div>
+      {/* Tasas */}
+     <div className="exchange-info">
+  <p className="inline-rate">
+    1 USD =
+    <input
+      className="rate-input"
+      value={usdToPesos}
+      onChange={handle(setUsdToPesos)}
+    />
+    PESOS
+  </p>
+  <p className="inline-rate">
+    1000 PESOS =
+    <input
+      className="rate-input small"
+      value={bsPer1kPesos}
+      onChange={handle(setBsPer1k)}
+    />
+    Bs
+  </p>
+  <p className="inline-rate">
+    1 USD = {format(usdToBs)} Bs (Tasa BCV actual)
+  </p>
+</div>
 
-      {/* Fecha y footer */}
+
+      {/* Footer */}
       <div className="act">
         <p>Actualizado al {lastUpdate}</p>
       </div>
