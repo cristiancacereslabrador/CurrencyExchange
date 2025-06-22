@@ -64,11 +64,11 @@ const bsResponse = await axios.get(
   const handle = (setter) => (e) => setter(cleanNumber(e.target.value));
 
   /* ─────────── TASA USD → Bs DERIVADA ─────────── */
-  const usdToBsRate = useMemo(() => {
-    const rUsdPesos = parseFloat(usdToPesos) || 0;
-    const rBs1k     = parseFloat(bsPer1kPesos) || 0;
-    return rUsdPesos && rBs1k ? (rUsdPesos * rBs1k) / 1000 : 0;
-  }, [usdToPesos, bsPer1kPesos]);
+  // const usdToBsRate = useMemo(() => {
+  //   const rUsdPesos = parseFloat(usdToPesos) || 0;
+  //   const rBs1k     = parseFloat(bsPer1kPesos) || 0;
+  //   return rUsdPesos && rBs1k ? (rUsdPesos * rBs1k) / 1000 : 0;
+  // }, [usdToPesos, bsPer1kPesos]);
 
   /* ─────────── CÁLCULOS ─────────── */
   const {
