@@ -36,7 +36,8 @@ body {
 }
 
 .input-group {
-  margin-bottom: 10px;
+  width: 100%;
+  /* margin-bottom: 10px; */
 }
 
 
@@ -51,6 +52,14 @@ body {
 }
 .label-below2 {
   text-align: left;
+  font-weight: bold;
+  margin-top: 4px;
+  color: #000000;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
+}
+.label-below3 {
+  text-align: right;
   font-weight: bold;
   margin-top: 4px;
   color: #000000;
@@ -72,7 +81,8 @@ body {
 }
 .input.monto-input2{
  background: #002c5f;
- color: white
+ color: white;
+ width: 90%;
 }
 .input.low {
   height: 40px;
@@ -130,6 +140,7 @@ body {
   background-color: orange;
   padding: 12px;
   border-radius: 8px;
+  width: auto;
 }
 
 /* exchange rates */
@@ -264,4 +275,142 @@ body {
 .inline-rate-row .inline-rate {
   flex: 1;
   margin-bottom: 0; /* elimina el espacio vertical que había antes */
+}
+
+/* .input-flex{
+  display: flex;
+  flex: 1;
+} */
+
+.fixed-width-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* DINERO FALTANTE agrupado con etiqueta debajo */
+.faltante-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.faltante-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 100px;
+}
+.faltante-label {
+  text-align: center;
+  margin-top: 4px;
+  color: #ffe600;
+  font-weight: 900;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+.dual-input > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.dual-input {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* En pantallas pequeñas, que los inputs se apilen */
+@media only screen and (max-width: 500px) {
+  .dual-input {
+    flex-direction: column;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .exchange-info {
+    font-size: 0.85rem;
+  }
+
+  .inline-rate {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .rate-input {
+    font-size: 0.9rem;
+    padding: 4px 6px;
+    width: 100px;
+  }
+
+  .rate-input.small {
+    width: 60px;
+    font-size: 0.85rem;
+  }
+
+  .rate-input.small2 {
+    width: 80px;
+    font-size: 0.85rem;
+  }
+
+  .inline-rate-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .inline-rate-row .inline-rate {
+    margin-bottom: 0;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .title {
+    font-size: 1.8rem;
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+.divider-line {
+  border: none;
+  border-top: 2px solid #4caf50;
+  margin: 20px 0 10px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.conversion-section {
+  background-color: #2e7d32;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.conversion-input {
+  background-color: #1b5e20;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 900;
+}
+
+.conversion-section {
+  background-color: #2e7d32;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.conversion-input {
+  background-color: #1b5e20;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 900;
 }

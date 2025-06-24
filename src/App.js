@@ -19,30 +19,38 @@ const App = () => {
   const [usdToPesos, setUsdToPesos] = useState("0");
   const [usdToBs, setUsdToBs] = useState("");
   const [bsPer1kPesos, setBsPer1k] = useState("27");
+
   const [bsMonto, setBsMonto] = useState("");
   const [pesos, setPesos] = useState("");
   const [usd, setUsd] = useState("");
   const [bs, setBs] = useState("");
+
   const [lastUpdate, setLastUpdate] = useState("");
   const [actYear, setActYear] = useState("");
+
+  // NUEVOS CAMPOS CONVERTIDORES
+  const [bsToUsd, setBsToUsd] = useState("");
+  const [usdToBsConv, setUsdToBsConv] = useState("");
+  const [copToUsd, setCopToUsd] = useState("");
+  const [usdToCop, setUsdToCop] = useState("");
 
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get(
-          "https://api.exchangerate-api.com/v4/latest/USD"
-        );
+        const { data } = await axios.get("https://api.exchangerate-api.com/v4/latest/USD");
         const usdToCop = parseFloat(data.rates.COP.toFixed(2));
         setUsdToPesos(usdToCop.toString());
         const usdToBsInicial = parseFloat(data.rates.VES.toFixed(2));
         setUsdToBs(usdToBsInicial);
+        setUsdToCop(""); // limpiar si quedaba algo viejo
+
         const [y, m, d] = data.date.split("-");
-        setActYear(y);
         const meses = [
           "enero", "febrero", "marzo", "abril", "mayo", "junio",
           "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
         ];
         setLastUpdate(`${parseInt(d)} de ${meses[parseInt(m) - 1]}`);
+        setActYear(y);
       } catch (err) {
         console.error("Error obteniendo tasa:", err);
       }
@@ -94,178 +102,303 @@ const App = () => {
     };
   }, [usd, pesos, bs, bsMonto, usdToPesos, usdToBs, bsPer1kPesos]);
 
+  const convertBsToUsd = () => {
+    const bsVal = parseFloat(bsToUsd) || 0;
+    return usdToBs ? format(bsVal / usdToBs) : "0.00";
+  };
+
+  const convertUsdToBs = () => {
+    const usdVal = parseFloat(usdToBsConv) || 0;
+    return usdToBs ? format(usdVal * usdToBs) : "0.00";
+  };
+
+  const convertCopToUsd = () => {
+    const copVal = parseFloat(copToUsd) || 0;
+    return usdToPesos ? format(copVal / usdToPesos) : "0.00";
+  };
+
+  const convertUsdToCop = () => {
+    const usdVal = parseFloat(usdToCop) || 0;
+    return usdToPesos ? format(usdVal * usdToPesos) : "0.00";
+  };
+
   return (
     <div className="app-container">
       <h1 className="title">BS · PESOS · USD</h1>
 
-      <div className="form-container monto-section">
-        <div className="input-group dual-input">
-          <div>
-            <input
-              className="input monto-input"
-              type="text"
-              value={bsMonto}
-              onChange={handle(setBsMonto)}
-              placeholder="0,00"
-            />
-            <div className="label-below2">BOLÍVARES</div>
-          </div>
-          <div>
-            <input
-              className="input monto-input2"
-              type="text"
-              value={pesosMontoCalculado}
-              readOnly
-            />
-            <div className="label-below2">PESOS</div>
+      <div className="fixed-width-container">
+        {/* BLOQUE NARANJA BOLIVARES -> PESOS */}
+        <div className="form-container monto-section">
+          <div className="input-group dual-input">
+            <div>
+              <input
+                className="input monto-input"
+                type="text"
+                value={bsMonto}
+                onChange={handle(setBsMonto)}
+                placeholder="0,00"
+              />
+              <div className="label-below2">BOLÍVARES</div>
+            </div>
+            <div>
+              <input
+                className="input monto-input2"
+                type="text"
+                value={pesosMontoCalculado}
+                readOnly
+              />
+              <div className="label-below2">PESOS</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="form-container">
-        <div className="input-group">
+        {/* INGRESOS */}
+        <div className="form-container">
+          <div className="input-group">
             <div className="label-below">PESOS RECIBIDOS</div>
-          <div style={{ position: "relative", display: "inline-block" }}>
-            <input
-              className="input low"
-              type="text"
-              value={pesos}
-              onChange={handle(setPesos)}
-              placeholder="0,00"
-              style={{ paddingRight: "60px" }}
-            />
-            <span className="unit-label">PESOS</span>
+            <div style={{ position: "relative", display: "inline-block", width: "100%" }}>
+              <input
+                className="input low"
+                type="text"
+                value={pesos}
+                onChange={handle(setPesos)}
+                placeholder="0,00"
+                style={{ paddingRight: "60px" }}
+              />
+              <span className="unit-label">PESOS</span>
+            </div>
           </div>
-        </div>
 
-        <div className="input-group">
-            <div className="label-below">DOLARES RECIBIDOS</div>
-          <div className="input-with-label">
-            <input
-              className="input low2"
-              type="text"
-              value={usd}
-              onChange={handle(setUsd)}
-              placeholder="0,00"
-            />
-            <div className="converted-box">{usdPesosStr} PESOS</div>
+          <div className="input-group">
+            <div className="label-below">DÓLARES RECIBIDOS</div>
+            <div className="input-with-label">
+              <input
+                className="input low2"
+                type="text"
+                value={usd}
+                onChange={handle(setUsd)}
+                placeholder="0,00"
+              />
+              <div className="converted-box">{usdPesosStr} PESOS</div>
+            </div>
           </div>
-        </div>
 
-        <div className="input-group">
+          <div className="input-group">
             <div className="label-below">BOLÍVARES RECIBIDOS</div>
-          <div className="input-with-label">
+            <div className="input-with-label">
+              <input
+                className="input low2"
+                type="text"
+                value={bs}
+                onChange={handle(setBs)}
+                placeholder="0,00"
+              />
+              <div className="converted-box">{bsPesosStr} PESOS</div>
+            </div>
+          </div>
+        </div>
+
+        {/* TOTALES */}
+        <div className="form-container">
+          <div className="input-group">
+            <label style={{ color: "white" }}>TOTAL RECIBIDO</label>
+            <div className="input-with-unit">
+              <input
+                className="input secondary low result-box"
+                value={totalPesosStr}
+                readOnly
+              />
+              <span className="unit-label">PESOS</span>
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label style={{ color: "white" }}>DINERO FALTANTE</label>
+            <div className="faltante-group">
+              <div className="faltante-item">
+                <input
+                  className="input secondary low result-box"
+                  value={faltanteBs}
+                  readOnly
+                />
+                <div className="faltante-label">BOLÍVARES</div>
+              </div>
+              <div className="faltante-item">
+                <input
+                  className="input secondary low result-box"
+                  value={faltanteStr}
+                  readOnly
+                />
+                <div className="faltante-label">PESOS</div>
+              </div>
+              <div className="faltante-item">
+                <input
+                  className="input secondary low result-box"
+                  value={faltanteUsd}
+                  readOnly
+                />
+                <div className="faltante-label">DÓLARES</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label style={{ color: "white" }}>TOTAL VUELTO</label>
+            <div className="input-with-unit">
+              <input
+                className="input secondary low result-box"
+                value={vueltoStr}
+                readOnly
+              />
+              <span className="unit-label">PESOS</span>
+            </div>
+          </div>
+        </div>
+
+        {/* EXCHANGE INFO */}
+            <hr style={{ height: "4px", backgroundColor: "#fff", border: "none" }} />
+      <p style={{ textAlign: "center" }}>TASAS DE CAMBIO </p>
+        <div className="exchange-info">
+          <p className="inline-rate">
+            1 USD =
             <input
-              className="input low2"
+              className="rate-input"
               type="text"
-              value={bs}
-              onChange={handle(setBs)}
-              placeholder="0,00"
+              value={usdToPesos}
+              onChange={handle(setUsdToPesos)}
             />
-            <div className="converted-box">{bsPesosStr} PESOS</div>
-          </div>
-        </div>
-      </div>
+            PESOS
+          </p>
 
-      <div className="form-container">
-        <div className="input-group">
-          <label style={{ color: "white" }}>TOTAL RECIBIDO</label>
-          <div className="input-with-unit">
-            <input
-              className="input secondary low result-box"
-              value={totalPesosStr}
-              readOnly
-            />
-            <span className="unit-label">PESOS</span>
-          </div>
-        </div>
-
-        <div className="input-group">
-          <label style={{ color: "white" }}>DINERO FALTANTE</label>
-          <div className="dual-input">
-            <input
-              className="input secondary low result-box"
-              value={faltanteBs}
-              readOnly
-            />
-            <input
-              className="input secondary low result-box"
-              value={faltanteStr}
-              readOnly
-            />
-            <input
-              className="input secondary low result-box"
-              value={faltanteUsd}
-              readOnly
-            />
-          </div>
-          <div className="label-below dual-input">
-            <span>BOLÍVARES</span>
-            <span>PESOS</span>
-            <span>DOLARES</span>
+          <div className="inline-rate-row">
+            <p className="inline-rate">
+              1 PESO =
+              <input
+                className="rate-input small"
+                type="text"
+                value={bsPer1kPesos}
+                onChange={handle(setBsPer1k)}
+              />
+              BS.
+            </p>
+            <p className="inline-rate">
+              1 USD =
+              <input
+                className="rate-input small2"
+                type="text"
+                value={usdToBs}
+                onChange={handle(setUsdToBs)}
+              />
+              BS.
+            </p>
           </div>
         </div>
 
-        <div className="input-group">
-          <label style={{ color: "white" }}>TOTAL VUELTO</label>
-          <div className="input-with-unit">
-            <input
-              className="input secondary low result-box"
-              value={vueltoStr}
-              readOnly
-            />
-            <span className="unit-label">PESOS</span>
+        {/* NUEVA SECCIÓN VERDE */}
+        <hr style={{ height: "4px", backgroundColor: "#fff", border: "none" }} />
+
+        <div className="form-container monto-section" style={{ backgroundColor: "#007f3d" }}>
+          <div className="input-group dual-input">
+            <div>
+              <input
+                className="input monto-input"
+                type="text"
+                value={bsToUsd}
+                onChange={handle(setBsToUsd)}
+                placeholder="0,00"
+              />
+              <div className="label-below2">BOLÍVARES A DÓLARES</div>
+            </div>
+            <div>
+              <input
+                className="input monto-input2"
+                type="text"
+                value={convertBsToUsd()}
+                readOnly
+              />
+              <div className="label-below3">DÓLARES</div>
+            </div>
+          </div>
+
+          <div className="input-group dual-input" style={{ marginTop: "10px" }}>
+            <div>
+              <input
+                className="input monto-input"
+                type="text"
+                value={usdToBsConv}
+                onChange={handle(setUsdToBsConv)}
+                placeholder="0,00"
+              />
+              <div className="label-below2">DÓLARES A BOLÍVARES</div>
+            </div>
+            <div>
+              <input
+                className="input monto-input2"
+                type="text"
+                value={convertUsdToBs()}
+                readOnly
+              />
+              <div className="label-below3">BOLÍVARES</div>
+            </div>
+          </div>
+
+          <div className="input-group dual-input" style={{ marginTop: "10px" }}>
+            <div>
+              <input
+                className="input monto-input"
+                type="text"
+                value={copToUsd}
+                onChange={handle(setCopToUsd)}
+                placeholder="0,00"
+              />
+              <div className="label-below2">PESOS A DÓLARES</div>
+            </div>
+            <div>
+              <input
+                className="input monto-input2"
+                type="text"
+                value={convertCopToUsd()}
+                readOnly
+              />
+              <div className="label-below3">DÓLARES</div>
+            </div>
+          </div>
+
+          <div className="input-group dual-input" style={{ marginTop: "10px" }}>
+            <div>
+              <input
+                className="input monto-input"
+                type="text"
+                value={usdToCop}
+                onChange={handle(setUsdToCop)}
+                placeholder="0,00"
+              />
+              <div className="label-below2">DÓLARES A PESOS</div>
+            </div>
+            <div>
+              <input
+                className="input monto-input2"
+                type="text"
+                value={convertUsdToCop()}
+                readOnly
+              />
+              <div className="label-below3">PESOS</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="exchange-info">
-        <p className="inline-rate">
-          1 USD =
-          <input
-            className="rate-input"
-            type="text"
-            value={usdToPesos}
-            onChange={handle(setUsdToPesos)}
-          />
-          PESOS COLOMBIANOS
-        </p>
-       <div className="inline-rate-row">
-  <p className="inline-rate">
-    1 PESO =
-    <input
-      className="rate-input small"
-      type="text"
-      value={bsPer1kPesos}
-      onChange={handle(setBsPer1k)}
-    />
-    BS.
-  </p>
-  <p className="inline-rate">
-    1 USD =
-    <input
-      className="rate-input small2"
-      type="text"
-      value={usdToBs}
-      onChange={handle(setUsdToBs)}
-    />
-    BS.
-  </p>
-</div>
-
-      </div>
-
-      <div className="act">
-        <p>Actualizado al {lastUpdate}</p>
-      </div>
-      <div className="creator">
-        <p>
-          &copy; {actYear}&nbsp;
-          <a href="https://wa.me/51980675172" className="name">
-            Cristian Cáceres&nbsp;
-            <i className="fab fa-whatsapp whatsapp-icon" />
-          </a>
-        </p>
+        <div className="act">
+          <p>Actualizado al {lastUpdate}</p>
+        </div>
+        <div className="creator">
+          <p>
+            &copy; {actYear}&nbsp;
+            <a href="https://wa.me/51980675172" className="name">
+              Cristian Cáceres&nbsp;
+              <i className="fab fa-whatsapp whatsapp-icon" />
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
