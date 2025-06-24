@@ -108,7 +108,7 @@ const App = () => {
               onChange={handle(setBsMonto)}
               placeholder="0,00"
             />
-            <div className="label-below">BOLÍVARES</div>
+            <div className="label-below2">BOLÍVARES</div>
           </div>
           <div>
             <input
@@ -117,7 +117,7 @@ const App = () => {
               value={pesosMontoCalculado}
               readOnly
             />
-            <div className="label-below">PESOS</div>
+            <div className="label-below2">PESOS</div>
           </div>
         </div>
       </div>

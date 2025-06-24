@@ -49,6 +49,14 @@ body {
   font-size: 1rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
+.label-below2 {
+  text-align: left;
+  font-weight: bold;
+  margin-top: 4px;
+  color: #000000;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
+}
 
 /* input base */
 .input {
@@ -64,6 +72,7 @@ body {
 }
 .input.monto-input2{
  background: #002c5f;
+ color: white
 }
 .input.low {
   height: 40px;
