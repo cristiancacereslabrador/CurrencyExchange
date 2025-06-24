@@ -77,7 +77,7 @@ const App = () => {
   } = useMemo(() => {
     const rUsdPesos = parseFloat(usdToPesos) || 0;
     const rUsdBs = parseFloat(usdToBs) || 1;
-    const usdVal = parseFloat(usd.replace(/,/g, ".")) || 0;
+    const usdVal = parseFloat(usd.replaceAll(",", ".").replace(/[^\d.]/g, "")) || 0;
     const pesosVal = parseFloat(pesos.replace(/,/g, ".")) || 0;
     const bsVal = parseFloat(bs.replace(/,/g, ".")) || 0;
     const bsMontoVal = parseFloat(bsMonto.replace(/,/g, ".")) || 0;
