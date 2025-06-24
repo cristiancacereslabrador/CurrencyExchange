@@ -16,8 +16,8 @@ const cleanNumber = (v) =>
     .replace(/^0+(?=\d)/, "");
 
 const App = () => {
-  const [usdToPesos, setUsdToPesos] = useState("1");
-  const [usdToBs, setUsdToBs] = useState("1");
+  const [usdToPesos, setUsdToPesos] = useState("0");
+  const [usdToBs, setUsdToBs] = useState("");
   const [bsPer1kPesos, setBsPer1k] = useState("27");
 
   const [bsMonto, setBsMonto] = useState("");
@@ -28,6 +28,7 @@ const App = () => {
   const [lastUpdate, setLastUpdate] = useState("");
   const [actYear, setActYear] = useState("");
 
+  // NUEVOS CAMPOS CONVERTIDORES
   const [bsToUsd, setBsToUsd] = useState("");
   const [usdToBsConv, setUsdToBsConv] = useState("");
   const [copToUsd, setCopToUsd] = useState("");
@@ -40,7 +41,8 @@ const App = () => {
         const usdToCop = parseFloat(data.rates.COP.toFixed(2));
         setUsdToPesos(usdToCop.toString());
         const usdToBsInicial = parseFloat(data.rates.VES.toFixed(2));
-        setUsdToBs(usdToBsInicial.toString());
+        setUsdToBs(usdToBsInicial);
+        setUsdToCop(""); // limpiar si quedaba algo viejo
 
         const [y, m, d] = data.date.split("-");
         const meses = [
@@ -102,22 +104,22 @@ const App = () => {
 
   const convertBsToUsd = () => {
     const bsVal = parseFloat(bsToUsd) || 0;
-    return usdToBs ? format(bsVal / parseFloat(usdToBs)) : "0.00";
+    return usdToBs ? format(bsVal / usdToBs) : "0.00";
   };
 
   const convertUsdToBs = () => {
     const usdVal = parseFloat(usdToBsConv) || 0;
-    return usdToBs ? format(usdVal * parseFloat(usdToBs)) : "0.00";
+    return usdToBs ? format(usdVal * usdToBs) : "0.00";
   };
 
   const convertCopToUsd = () => {
     const copVal = parseFloat(copToUsd) || 0;
-    return usdToPesos ? format(copVal / parseFloat(usdToPesos)) : "0.00";
+    return usdToPesos ? format(copVal / usdToPesos) : "0.00";
   };
 
   const convertUsdToCop = () => {
     const usdVal = parseFloat(usdToCop) || 0;
-    return usdToPesos ? format(usdVal * parseFloat(usdToPesos)) : "0.00";
+    return usdToPesos ? format(usdVal * usdToPesos) : "0.00";
   };
 
   return (
@@ -127,7 +129,8 @@ const App = () => {
       <div className="fixed-width-container">
         {/* BLOQUE NARANJA BOLIVARES -> PESOS */}
         <div className="form-container monto-section">
-          <h1 className="title2">MONTO A PAGAR</h1>
+
+      <h1 className="title2">MONTO A PAGAR</h1>
           <div className="input-group dual-input">
             <div>
               <input
@@ -254,9 +257,9 @@ const App = () => {
           </div>
         </div>
 
-        {/* TASAS DE CAMBIO */}
-        <hr style={{ height: "4px", backgroundColor: "#fff", border: "none" }} />
-        <p className="title-tc">TASAS DE CAMBIO</p>
+        {/* EXCHANGE INFO */}
+            <hr style={{ height: "4px", backgroundColor: "#fff", border: "none" }} />
+      <p className="title-tc" style={{  }}>TASAS DE CAMBIO </p>
         <div className="exchange-info">
           <p className="inline-rate">
             1 USD =
@@ -293,14 +296,12 @@ const App = () => {
           </div>
         </div>
 
-        {/* CONVERSORES */}
-       {/* ... código anterior ... */}
+        {/* NUEVA SECCIÓN VERDE */}
+        <hr style={{ height: "4px", backgroundColor: "#fff", border: "none" }} />
 
-{/* CONVERSORES - SECCIÓN VERDE */}
-<hr style={{ height: "4px", backgroundColor: "#fff", border: "none" }} />
-<div className="form-container monto-section" style={{ backgroundColor: "#007f3d" }}>
+       <div className="form-container monto-section" style={{ backgroundColor: "#007f3d" }}>
   {/* BOLÍVARES A DÓLARES */}
-  <div className="label-below4">BOLÍVARES A DÓLARES</div>
+      <div className="label-below4">BOLÍVARES A DÓLARES</div>
   <div className="input-group dual-input">
     <div>
       <input
@@ -323,7 +324,7 @@ const App = () => {
   </div>
 
   {/* DÓLARES A BOLÍVARES */}
-  <div className="label-below4">DÓLARES A BOLÍVARES</div>
+      <div className="label-below4">DÓLARES A BOLÍVARES</div>
   <div className="input-group dual-input" style={{ marginBottom: "10px" }}>
     <div>
       <input
@@ -346,7 +347,7 @@ const App = () => {
   </div>
 
   {/* PESOS A DÓLARES */}
-  <div className="label-below4">PESOS A DÓLARES</div>
+      <div className="label-below4">PESOS A DÓLARES</div>
   <div className="input-group dual-input" style={{ marginTop: "10px" }}>
     <div>
       <input
@@ -369,7 +370,7 @@ const App = () => {
   </div>
 
   {/* DÓLARES A PESOS */}
-  <div className="label-below4">DÓLARES A PESOS</div>
+      <div className="label-below4">DÓLARES A PESOS</div>
   <div className="input-group dual-input" style={{ marginTop: "1px" }}>
     <div>
       <input
@@ -391,51 +392,54 @@ const App = () => {
     </div>
   </div>
 
-  {/* BOLÍVARES A PESOS */}
-  <div className="label-below4">BOLÍVARES A PESOS</div>
-  <div className="input-group dual-input" style={{ marginTop: "1px" }}>
-    <div>
-      <input
-        className="input monto-input"
-        type="text"
-        value={bs}
-        onChange={handle(setBs)}
-        placeholder="0,00"
-      />
-    </div>
-    <div className="input-with-unit">
-      <input
-        className="input monto-input3"
-        type="text"
-        value={bsPesosStr}
-        readOnly
-      />
-      <span className="unit-label inside">PESOS</span>
-    </div>
-  </div>
 
-  {/* PESOS A BOLÍVARES */}
-  <div className="label-below4">PESOS A BOLÍVARES</div>
-  <div className="input-group dual-input" style={{ marginTop: "1px" }}>
-    <div>
-      <input
-        className="input monto-input"
-        type="text"
-        value={pesos}
-        onChange={handle(setPesos)}
-        placeholder="0,00"
-      />
-    </div>
-    <div className="input-with-unit">
-      <input
-        className="input monto-input3"
-        type="text"
-        value={format((parseFloat(pesos.replace(/,/g, ".")) || 0) / (parseFloat(bsPer1kPesos) || 1))}
-        readOnly
-      />
-      <span className="unit-label inside">BOLÍVARES</span>
-    </div>
+{/* BOLÍVARES A PESOS */}
+    <div className="label-below4">BOLÍVARES A PESOS</div>
+<div className="input-group dual-input" style={{ marginTop: "1px" }}>
+  <div>
+    <input
+      className="input monto-input"
+      type="text"
+      value={bs}
+      onChange={handle(setBs)}
+      placeholder="0,00"
+    />
   </div>
+  <div className="input-with-unit">
+    <input
+      className="input monto-input3"
+      type="text"
+      value={bsPesosStr}
+      readOnly
+    />
+    <span className="unit-label inside">PESOS</span>
+  </div>
+</div>
+
+{/* PESOS A BOLÍVARES */}
+    <div className="label-below4">PESOS A BOLÍVARES</div>
+<div className="input-group dual-input" style={{ marginTop: "1px" }}>
+  <div>
+    <input
+      className="input monto-input"
+      type="text"
+      value={pesos}
+      onChange={handle(setPesos)}
+      placeholder="0,00"
+    />
+  </div>
+  <div className="input-with-unit">
+    <input
+      className="input monto-input3"
+      type="text"
+      value={format((parseFloat(pesos.replace(/,/g, ".")) || 0) / (parseFloat(bsPer1kPesos) || 1))}
+      readOnly
+    />
+    <span className="unit-label inside">BOLÍVARES</span>
+  </div>
+</div>
+
+
 </div>
 
 

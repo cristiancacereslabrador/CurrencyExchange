@@ -1,0 +1,466 @@
+/* App.css */
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap");
+
+body {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  background-color: #111;
+  background-image: url("/public/background_hor.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  min-height: 100vh;
+  color: #fff;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: rgb(6, 51, 164);
+  text-shadow: 0 4px 3px rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+}
+
+.title2 {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(6, 51, 164);
+  text-shadow: 0 4px 3px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 10px;
+}
+
+.input-group {
+  width: 100%;
+  /* margin-bottom: 10px; */
+}
+
+
+
+.label-below {
+  text-align: left;
+  font-weight: bold;
+  margin-top: 4px;
+  color: #ffe600;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+.label-below2 {
+  text-align: left;
+  font-weight: bold;
+  margin-top: 4px;
+  color: #000000;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
+}
+.label-below3 {
+  text-align: right;
+  font-weight: bold;
+  margin-top: 4px;
+  color: #000000;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
+}
+.label-below4 {
+  text-align: left;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #000000;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
+}
+
+/* input base */
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  font-size: 1.5rem;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  text-align: center;
+  box-sizing: border-box;
+}
+.input.monto-input2{
+ background: #002c5f;
+ color: white;
+ width: 90%;
+}
+.input.monto-input3{
+ background: #015617;
+ color: rgb(255, 255, 255);
+ width: 45%;
+}
+.input.low {
+  height: 40px;
+  font-size: 1.4rem;
+}
+.input.low2 {
+  height: 40px;
+  width: 45%;
+  font-size: 1.4rem;
+}
+
+.input.secondary {
+  background-color: #002c5f;
+  color: white;
+}
+
+.result-box {
+  background-color: #002c5f;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Dual input */
+.input-with-label {
+  display: flex;
+  width: 100%;
+}
+
+.converted-box {
+  background: #002c5f;
+  padding: 10px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  text-align: right;
+  width: 55%;
+  height: 40px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+}
+
+.dual-input {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.dual-input .input {
+  width: 100%;
+}
+
+/* monto section naranja */
+.monto-section {
+  background-color: orange;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 8px;
+  width: auto;
+}
+
+/* exchange rates */
+.exchange-info {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 500px;
+
+}
+
+.exchange-info p {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.rate-input {
+  width: 120px;
+  padding: 6px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  font-family: "Orbitron", sans-serif;
+  margin: 0 6px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  border: 1px solid gray;
+}
+
+.rate-input.small {
+  width: 60px;
+}
+.rate-input.small2 {
+  width: 100px;
+}
+
+/* Footer */
+.creator,
+.act {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.creator .name {
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: rgb(6, 164, 6);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.whatsapp-icon {
+  color: rgb(6, 164, 6);
+  margin-left: 6px;
+}
+
+/* --- NUEVOS ESTILOS PARA ALTURA FIJA Y MISMO TAMAÑO --- */
+
+/* Altura fija para inputs/resultados donde se requiere igual tamaño */
+.fixed-height .input,
+.fixed-height .converted-box,
+.result-box.fixed-height {
+  height: 48px !important;
+  min-height: 48px;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Para que los recuadros PESOS y USD estén lado a lado con mismo tamaño */
+.fixed-width {
+  width: 48%;
+}
+
+/* Faltante etiquetas de moneda debajo */
+.faltante-labels {
+  display: flex;
+  justify-content: space-between;
+  max-width: 500px;
+  margin-top: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
+  color: #ffe600;
+  font-weight: 900;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Responsive para pantallas pequeñas */
+@media only screen and (max-width: 768px) {
+  .app-container {
+    padding-top: 20px;
+  }
+  .dual-input {
+    flex-direction: column;
+  }
+  .fixed-width {
+    width: 100%;
+  }
+  .faltante-labels {
+    max-width: 100%;
+  }
+}
+
+.input-with-unit {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.input-with-unit .input {
+  padding-right: 60px; /* Espacio para el texto fijo */
+}
+
+.unit-label {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #888;
+  font-size: 0.9rem;
+}
+.inline-rate-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.inline-rate-row .inline-rate {
+  flex: 1;
+  margin-bottom: 0; /* elimina el espacio vertical que había antes */
+}
+
+/* .input-flex{
+  display: flex;
+  flex: 1;
+} */
+
+.fixed-width-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* DINERO FALTANTE agrupado con etiqueta debajo */
+.faltante-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.faltante-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 100px;
+}
+.faltante-label {
+  text-align: center;
+  margin-top: 4px;
+  color: #ffe600;
+  font-weight: 900;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+.dual-input > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.dual-input {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* En pantallas pequeñas, que los inputs se apilen */
+@media only screen and (max-width: 500px) {
+  .dual-input {
+    flex-direction: column;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .exchange-info {
+    font-size: 0.85rem;
+  }
+
+  .inline-rate {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    margin-left: 30px;
+  }
+.title-tc {
+    font-size: 1.2rem;
+    text-align: center;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+  .rate-input {
+    font-size: 0.9rem;
+    padding: 4px 6px;
+    width: 100px;
+  }
+
+  .rate-input.small {
+    width: 60px;
+    font-size: 0.85rem;
+  }
+
+  .rate-input.small2 {
+    width: 80px;
+    font-size: 0.85rem;
+  }
+
+  .inline-rate-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .inline-rate-row .inline-rate {
+    margin-bottom: 0;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .title {
+    font-size: 1.8rem;
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+.divider-line {
+  border: none;
+  border-top: 2px solid #4caf50;
+  margin: 20px 0 10px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.conversion-section {
+  background-color: #2e7d32;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.conversion-input {
+  background-color: #1b5e20;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 900;
+}
+
+.conversion-section {
+  background-color: #2e7d32;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.conversion-input {
+  background-color: #1b5e20;
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 900;
+}
+.unit-label.inside {
+  color: #ffffff;
+  position: absolute;
+  right: 2px;
+  top: 70%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+  margin-bottom: 2px;
+}
+.input-with-unit {
+  position: relative;
+  width: 100%;
+}
+.input-with-unit .input {
+  padding-right: 50px; /* para que no tape el texto */
+}
