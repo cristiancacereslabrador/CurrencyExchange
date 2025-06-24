@@ -129,6 +129,8 @@ const App = () => {
       <div className="fixed-width-container">
         {/* BLOQUE NARANJA BOLIVARES -> PESOS */}
         <div className="form-container monto-section">
+
+      <h1 className="title2">MONTO A PAGAR</h1>
           <div className="input-group dual-input">
             <div>
               <input
