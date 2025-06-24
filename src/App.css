@@ -66,6 +66,14 @@ body {
   font-size: 1rem;
   text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
 }
+.label-below4 {
+  text-align: left;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #000000;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(222, 222, 222, 0.7);
+}
 
 /* input base */
 .input {
@@ -83,6 +91,11 @@ body {
  background: #002c5f;
  color: white;
  width: 90%;
+}
+.input.monto-input3{
+ background: #013d11;
+ color: rgb(0, 0, 0);
+ width: 45%;
 }
 .input.low {
   height: 40px;
@@ -148,6 +161,7 @@ body {
   margin-top: 10px;
   width: 100%;
   max-width: 500px;
+
 }
 
 .exchange-info p {
@@ -334,8 +348,13 @@ body {
   .inline-rate {
     font-size: 0.85rem;
     margin-bottom: 6px;
+    margin-left: 30px;
   }
-
+.title-tc {
+    font-size: 1.2rem;
+    text-align: center;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
   .rate-input {
     font-size: 0.9rem;
     padding: 4px 6px;
@@ -413,4 +432,23 @@ body {
   font-size: 1.2rem;
   text-align: center;
   font-weight: 900;
+}
+.unit-label.inside {
+  color: #ffffff;
+  position: absolute;
+  right: 2px;
+  top: 70%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+  margin-bottom: 2px;
+}
+.input-with-unit {
+  position: relative;
+  width: 100%;
+}
+.input-with-unit .input {
+  padding-right: 50px; /* para que no tape el texto */
 }
