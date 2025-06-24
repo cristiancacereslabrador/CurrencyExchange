@@ -1,58 +1,13 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-/* Fuente personalizada para el título y los números */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@900&family=Orbitron&display=swap");
+/* App.css */
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap");
 
 body {
   margin: 0;
-  padding: 0;
-  font-family: "Roboto", sans-serif;
-  background-image: url("/public/background_hor.png"); /* Imagen de fondo */
+  font-family: "Orbitron", sans-serif;
+  background-color: #111;
+  background-image: url("/public/background_hor.png");
   background-size: cover;
   background-position: center;
-}
-
-/* Imagen de fondo para navegadores móviles o pantallas pequeñas */
-@media only screen and (max-width: 768px) {
-  body {
-    background-image: url("/public/background_ver.png");
-  }
 }
 
 .app-container {
@@ -61,202 +16,243 @@ body {
   align-items: center;
   justify-content: start;
   min-height: 100vh;
-  color: rgb(239, 234, 234);
-  text-align: center;
-  background: rgba(0, 0, 0, 0.4); /* Filtro oscuro */
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 0px;
-  margin-top: 0px;
+  color: #fff;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
 }
-@media only screen and (max-width: 768px) {
-  app-container {
-    justify-content: center;
-    padding-top: 20px;
-  }
-}
+
 .title {
-  font-family: "Orbitron", sans-serif;
-  font-size: 2.3rem;
-  font-weight: 1200;
-  margin-bottom: 6px;
-  /* color: rgb(6, 164, 6); */
+  font-size: 2.5rem;
+  font-weight: 900;
   color: rgb(6, 51, 164);
   text-shadow: 0 4px 3px rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
 }
 
 .form-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
+  margin-bottom: 10px;
 }
 
 .input-group {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
-label {
+
+
+.label-below {
+  text-align: left;
   font-weight: bold;
-  font-size: 1.2rem;
-  display: block;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+  margin-top: 4px;
+  color: #ffe600;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
+/* input base */
 .input {
-  width: 80%;
+  width: 100%;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #333;
-  text-align: center;
   font-size: 1.5rem;
   font-family: "Orbitron", sans-serif;
-  color: #262626;
   font-weight: 900;
-  background-color: rgb(6, 164, 6);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-}
-
-.exchange-info p {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  font-size: 1.2rem;
-  width: 100%;
-  max-width: 400px;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  padding: 0px;
-  align-items: center;
-}
-.creator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.creator p {
-  margin-top: 7px;
-  color: rgb(255, 255, 255);
-  font-family: "Orbitron", sans-serif;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-.act p {
-  font-weight: 900;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  font-size: 1.2rem;
-  color: rgb(255, 255, 255);
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-.creator .name {
-  font-weight: 900;
-  font-size: 1.4rem;
-  font-family: "Orbitron", sans-serif;
-  color: rgb(6, 164, 6);
-  text-shadow: 2px 2px 0 rgba(152, 152, 152, 0.5),
-    -2px -2px 0 rgba(0, 0, 0, 0.7);
-  display: inline-flex;
-  align-items: center;
-  margin-left: 5px;
-  border-radius: 10px;
-  text-decoration: none;
-}
-
-.whatsapp-icon {
-  font-size: 1.4rem;
-  color: rgb(6, 164, 6);
-  margin-left: 8px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-/* ────── NUEVOS ESTILOS ────── */
-.input-group.highlight input {
-  font-size: 1.7rem;
-  font-weight: 900;
-  border: 2px solid #0ab7d2;
-}
-/* Campo editable de la tasa COP */
-.rate-input {
-  width: 90px;
-  padding: 4px;
-  margin: 0 4px;
   text-align: center;
-  font-size: 1.2rem;
-  font-family: "Orbitron", sans-serif;
-  font-weight: 900;
-  color: #262626;
-  background-color: rgb(6, 164, 6);
-  border: 1px solid #333;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+  box-sizing: border-box;
 }
-
-/* Caja doble (valor + equivalente en Bs) */
-.dual-input {
-  display: flex;
-  gap: 4px;
-  justify-content: center;
+.input.monto-input2{
+ background: #002c5f;
 }
-.dual-input .input {
-  width: 50%;
-}
-.input.secondary {
-  opacity: 0.9;
-  cursor: default;
-}
-/* ↓ Ajusta altura y fuente de todos los inputs “low” */
 .input.low {
-  padding: 6px 8px;     /* más bajito */
-  font-size: 1.3rem;
-  height: 20px;
+  height: 40px;
+  font-size: 1.4rem;
+}
+.input.low2 {
+  height: 40px;
+  width: 45%;
+  font-size: 1.4rem;
 }
 
-/* ↓ Contenedor input + etiqueta gris */
+.input.secondary {
+  background-color: #002c5f;
+  color: white;
+}
+
+.result-box {
+  background-color: #002c5f;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+/* Dual input */
 .input-with-label {
   display: flex;
   width: 100%;
 }
-.input-with-label .input.low,
-.input-with-label .converted-box {
-  width: 50%;
-}
 
-/* ↓ Caja gris con “PESOS” */
 .converted-box {
-  background: #e0e0e0;
-  padding: 6px 8px;
-  border-radius: 6px;
+  background: #002c5f;
+  padding: 10px;
   font-size: 1.3rem;
-  font-family: "Orbitron", sans-serif;
   font-weight: 900;
-  color: #333;
   text-align: right;
+  width: 55%;
+  height: 40px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.9);
-  height: 32px;
 }
 
-/* ↓ Inputs de tasa (sin cambiar) —añado .small por si no lo tenías */
-.rate-input {
-  width: 160px;
-  height: 16px;
-  padding: 4px;
-  font-size: 1.2rem;
+.dual-input {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
 }
+
+.dual-input .input {
+  width: 100%;
+}
+
+/* monto section naranja */
+.monto-section {
+  background-color: orange;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* exchange rates */
+.exchange-info {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.exchange-info p {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.rate-input {
+  width: 120px;
+  padding: 6px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  font-family: "Orbitron", sans-serif;
+  margin: 0 6px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  border: 1px solid gray;
+}
+
 .rate-input.small {
-  width: 80px;
-  height: 16px;
+  width: 60px;
+}
+.rate-input.small2 {
+  width: 100px;
+}
+
+/* Footer */
+.creator,
+.act {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.creator .name {
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: rgb(6, 164, 6);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.whatsapp-icon {
+  color: rgb(6, 164, 6);
+  margin-left: 6px;
+}
+
+/* --- NUEVOS ESTILOS PARA ALTURA FIJA Y MISMO TAMAÑO --- */
+
+/* Altura fija para inputs/resultados donde se requiere igual tamaño */
+.fixed-height .input,
+.fixed-height .converted-box,
+.result-box.fixed-height {
+  height: 48px !important;
+  min-height: 48px;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Para que los recuadros PESOS y USD estén lado a lado con mismo tamaño */
+.fixed-width {
+  width: 48%;
+}
+
+/* Faltante etiquetas de moneda debajo */
+.faltante-labels {
+  display: flex;
+  justify-content: space-between;
+  max-width: 500px;
+  margin-top: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
+  color: #ffe600;
+  font-weight: 900;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Responsive para pantallas pequeñas */
+@media only screen and (max-width: 768px) {
+  .app-container {
+    padding-top: 20px;
+  }
+  .dual-input {
+    flex-direction: column;
+  }
+  .fixed-width {
+    width: 100%;
+  }
+  .faltante-labels {
+    max-width: 100%;
+  }
+}
+
+.input-with-unit {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.input-with-unit .input {
+  padding-right: 60px; /* Espacio para el texto fijo */
+}
+
+.unit-label {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #888;
+  font-size: 0.9rem;
+}
+.inline-rate-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.inline-rate-row .inline-rate {
+  flex: 1;
+  margin-bottom: 0; /* elimina el espacio vertical que había antes */
 }

@@ -2,9 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./App.css";
 
-/* --------------------------------------------------
-   Utilidades de formato: miles con punto y decimales con coma
--------------------------------------------------- */
 const format = (n) =>
   new Intl.NumberFormat("es-ES", {
     minimumFractionDigits: 2,
@@ -19,39 +16,31 @@ const cleanNumber = (v) =>
     .replace(/^0+(?=\d)/, "");
 
 const App = () => {
-  /* ─────────── ESTADO ─────────── */
-  const [usdToPesos, setUsdToPesos]   = useState("0");  // 1 USD ⇒ PESOS
-  const [bsPer1kPesos, setBsPer1k]   = useState("27"); // 1000 PESOS ⇒ Bs
-const [usdToBs, setUsdToBs] = useState(0);
-  const [amountPesos, setAmountPesos] = useState("");  // monto a cobrar
-  const [pesos, setPesos]             = useState("");  // pago en PESOS
-  const [usd,   setUsd]               = useState("");  // pago en USD
-  const [bs,    setBs]                = useState("");  // pago en Bs
+  const [usdToPesos, setUsdToPesos] = useState("0");
+  const [usdToBs, setUsdToBs] = useState("");
+  const [bsPer1kPesos, setBsPer1k] = useState("27");
+  const [bsMonto, setBsMonto] = useState("");
+  const [pesos, setPesos] = useState("");
+  const [usd, setUsd] = useState("");
+  const [bs, setBs] = useState("");
+  const [lastUpdate, setLastUpdate] = useState("");
+  const [actYear, setActYear] = useState("");
 
-  const [lastUpdate, setLastUpdate]   = useState("");
-  const [actYear, setActYear]         = useState("");
-
-  /* ─────────── OBTENER TASA INICIAL ─────────── */
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(
           "https://api.exchangerate-api.com/v4/latest/USD"
         );
-        // sin comisión de casa de cambio para claridad -> puedes ajustar
-        setUsdToPesos(data.rates.COP.toFixed(2));
-
-const bsResponse = await axios.get(
-          "https://api.exchangerate-api.com/v4/latest/USD"
-        );
-        setUsdToBs(bsResponse.data.rates.VES);
-
-
+        const usdToCop = parseFloat(data.rates.COP.toFixed(2));
+        setUsdToPesos(usdToCop.toString());
+        const usdToBsInicial = parseFloat(data.rates.VES.toFixed(2));
+        setUsdToBs(usdToBsInicial);
         const [y, m, d] = data.date.split("-");
         setActYear(y);
         const meses = [
-          "enero","febrero","marzo","abril","mayo","junio","julio",
-          "agosto","septiembre","octubre","noviembre","diciembre"
+          "enero", "febrero", "marzo", "abril", "mayo", "junio",
+          "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
         ];
         setLastUpdate(`${parseInt(d)} de ${meses[parseInt(m) - 1]}`);
       } catch (err) {
@@ -60,87 +49,100 @@ const bsResponse = await axios.get(
     })();
   }, []);
 
-  /* ─────────── HANDLER GENÉRICO ─────────── */
   const handle = (setter) => (e) => setter(cleanNumber(e.target.value));
 
-  /* ─────────── TASA USD → Bs DERIVADA ─────────── */
-  // const usdToBsRate = useMemo(() => {
-  //   const rUsdPesos = parseFloat(usdToPesos) || 0;
-  //   const rBs1k     = parseFloat(bsPer1kPesos) || 0;
-  //   return rUsdPesos && rBs1k ? (rUsdPesos * rBs1k) / 1000 : 0;
-  // }, [usdToPesos, bsPer1kPesos]);
+  const pesosMontoCalculado = useMemo(() => {
+    const bsVal = parseFloat(bsMonto.replace(/,/g, ".")) || 0;
+    const rBs1k = parseFloat(bsPer1kPesos) || 1;
+    const res = format(bsVal * rBs1k);
+    return res;
+  }, [bsMonto, bsPer1kPesos]);
 
-  /* ─────────── CÁLCULOS ─────────── */
   const {
     usdPesosStr,
     bsPesosStr,
     totalPesosStr,
+    faltanteBs,
+    faltanteUsd,
     faltanteStr,
     vueltoStr,
   } = useMemo(() => {
-    const rUsdPesos = parseFloat(usdToPesos)   || 0;
-    const rBs1k     = parseFloat(bsPer1kPesos) || 1;
+    const rUsdPesos = parseFloat(usdToPesos) || 0;
+    const rUsdBs = parseFloat(usdToBs) || 1;
+    const usdVal = parseFloat(usd.replace(/,/g, ".")) || 0;
+    const pesosVal = parseFloat(pesos.replace(/,/g, ".")) || 0;
+    const bsVal = parseFloat(bs.replace(/,/g, ".")) || 0;
+    const bsMontoVal = parseFloat(bsMonto.replace(/,/g, ".")) || 0;
+    const rBs1k = parseFloat(bsPer1kPesos) || 1;
 
-    const usdVal    = parseFloat(usd.replace(/,/g, '.'))   || 0;
-    const pesosVal  = parseFloat(pesos.replace(/,/g, '.')) || 0;
-    const bsVal     = parseFloat(bs.replace(/,/g, '.'))    || 0;
-    const amountVal = parseFloat(amountPesos.replace(/,/g, '.')) || 0;
-
+    const montoObjetivoEnPesos = bsMontoVal * rBs1k;
     const usdPesos = usdVal * rUsdPesos;
-    const bsPesos  = (bsVal / rBs1k) * 1000;
+    const bsPesos = bsVal * rBs1k;
+    const total = pesosVal + usdPesos + bsPesos;
 
-    const total    = pesosVal + usdPesos + bsPesos;
-    const falt     = Math.max(0, amountVal - total);
-    const vuelto   = Math.max(0, total - amountVal);
+    const falt = Math.max(0, montoObjetivoEnPesos - total);
+    const vuelto = Math.max(0, total - montoObjetivoEnPesos);
 
     return {
-      usdPesosStr   : format(usdPesos),
-      bsPesosStr    : format(bsPesos),
-      totalPesosStr : format(total),
-      faltanteStr   : format(falt),
-      vueltoStr     : format(vuelto),
+      usdPesosStr: format(usdPesos),
+      bsPesosStr: format(bsPesos),
+      totalPesosStr: format(total),
+      faltanteStr: format(falt),
+      faltanteBs: format((falt * rUsdBs) / rUsdPesos),
+      faltanteUsd: format(falt / rUsdPesos),
+      vueltoStr: format(vuelto),
     };
-  }, [usd, pesos, bs, amountPesos, usdToPesos, bsPer1kPesos]);
+  }, [usd, pesos, bs, bsMonto, usdToPesos, usdToBs, bsPer1kPesos]);
 
-  /* ─────────── RENDER ─────────── */
   return (
     <div className="app-container">
-      <h1 className="title">COBRO COP·USD·BS</h1>
+      <h1 className="title">BS · PESOS · USD</h1>
 
-      {/* Monto a cobrar */}
-      <div className="form-container">
-        <div className="input-group highlight">
-          <label>Monto a cobrar (PESOS)</label>
-          <input
-            className="input low"
-            type="text"
-            value={amountPesos}
-            onChange={handle(setAmountPesos)}
-            placeholder="0,00"
-          />
+      <div className="form-container monto-section">
+        <div className="input-group dual-input">
+          <div>
+            <input
+              className="input monto-input"
+              type="text"
+              value={bsMonto}
+              onChange={handle(setBsMonto)}
+              placeholder="0,00"
+            />
+            <div className="label-below">BOLÍVARES</div>
+          </div>
+          <div>
+            <input
+              className="input monto-input2"
+              type="text"
+              value={pesosMontoCalculado}
+              readOnly
+            />
+            <div className="label-below">PESOS</div>
+          </div>
         </div>
       </div>
 
-      {/* Pagos */}
       <div className="form-container">
-        {/* PESOS */}
         <div className="input-group">
-          <label>Pesos (PESOS)</label>
-          <input
-            className="input low"
-            type="text"
-            value={pesos}
-            onChange={handle(setPesos)}
-            placeholder="0,00"
-          />
-        </div>
-
-        {/* USD */}
-        <div className="input-group">
-          <label>Dólar (USD)</label>
-          <div className="input-with-label">
+            <div className="label-below">PESOS RECIBIDOS</div>
+          <div style={{ position: "relative", display: "inline-block" }}>
             <input
               className="input low"
+              type="text"
+              value={pesos}
+              onChange={handle(setPesos)}
+              placeholder="0,00"
+              style={{ paddingRight: "60px" }}
+            />
+            <span className="unit-label">PESOS</span>
+          </div>
+        </div>
+
+        <div className="input-group">
+            <div className="label-below">DOLARES RECIBIDOS</div>
+          <div className="input-with-label">
+            <input
+              className="input low2"
               type="text"
               value={usd}
               onChange={handle(setUsd)}
@@ -150,12 +152,11 @@ const bsResponse = await axios.get(
           </div>
         </div>
 
-        {/* Bs */}
         <div className="input-group">
-          <label>Bolívar (Bs)</label>
+            <div className="label-below">BOLÍVARES RECIBIDOS</div>
           <div className="input-with-label">
             <input
-              className="input low"
+              className="input low2"
               type="text"
               value={bs}
               onChange={handle(setBs)}
@@ -166,49 +167,94 @@ const bsResponse = await axios.get(
         </div>
       </div>
 
-      {/* Resultados */}
       <div className="form-container">
         <div className="input-group">
-          <label>Total recibido (PESOS)</label>
-          <input className="input secondary low" value={totalPesosStr} readOnly />
+          <label style={{ color: "white" }}>TOTAL RECIBIDO</label>
+          <div className="input-with-unit">
+            <input
+              className="input secondary low result-box"
+              value={totalPesosStr}
+              readOnly
+            />
+            <span className="unit-label">PESOS</span>
+          </div>
         </div>
+
         <div className="input-group">
-          <label>Faltante (PESOS)</label>
-          <input className="input secondary low" value={faltanteStr} readOnly />
+          <label style={{ color: "white" }}>DINERO FALTANTE</label>
+          <div className="dual-input">
+            <input
+              className="input secondary low result-box"
+              value={faltanteBs}
+              readOnly
+            />
+            <input
+              className="input secondary low result-box"
+              value={faltanteStr}
+              readOnly
+            />
+            <input
+              className="input secondary low result-box"
+              value={faltanteUsd}
+              readOnly
+            />
+          </div>
+          <div className="label-below dual-input">
+            <span>BOLÍVARES</span>
+            <span>PESOS</span>
+            <span>DOLARES</span>
+          </div>
         </div>
+
         <div className="input-group">
-          <label>Vuelto (PESOS)</label>
-          <input className="input secondary low" value={vueltoStr} readOnly />
+          <label style={{ color: "white" }}>TOTAL VUELTO</label>
+          <div className="input-with-unit">
+            <input
+              className="input secondary low result-box"
+              value={vueltoStr}
+              readOnly
+            />
+            <span className="unit-label">PESOS</span>
+          </div>
         </div>
       </div>
 
-      {/* Tasas */}
-     <div className="exchange-info">
+      <div className="exchange-info">
+        <p className="inline-rate">
+          1 USD =
+          <input
+            className="rate-input"
+            type="text"
+            value={usdToPesos}
+            onChange={handle(setUsdToPesos)}
+          />
+          PESOS COLOMBIANOS
+        </p>
+       <div className="inline-rate-row">
   <p className="inline-rate">
-    1 USD =
-    <input
-      className="rate-input"
-      value={usdToPesos}
-      onChange={handle(setUsdToPesos)}
-    />
-    PESOS
-  </p>
-  <p className="inline-rate">
-    1000 PESOS =
+    1 PESO =
     <input
       className="rate-input small"
+      type="text"
       value={bsPer1kPesos}
       onChange={handle(setBsPer1k)}
     />
-    Bs
+    BS.
   </p>
   <p className="inline-rate">
-    1 USD = {format(usdToBs)} Bs (Tasa BCV actual)
+    1 USD =
+    <input
+      className="rate-input small2"
+      type="text"
+      value={usdToBs}
+      onChange={handle(setUsdToBs)}
+    />
+    BS.
   </p>
 </div>
 
+      </div>
 
-      {/* Footer */}
       <div className="act">
         <p>Actualizado al {lastUpdate}</p>
       </div>
