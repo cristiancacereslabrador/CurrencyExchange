@@ -79,27 +79,45 @@ const App = () => {
       if (eParaReq.status === "fulfilled") paraleloEur = eParaReq.value.data.promedio;
 
       // 3. Parse COP
-      let usdToCop = 3701; // Default fallback
+      let usdToCop = null;
       if (copReq.status === "fulfilled") {
         usdToCop = copReq.value.data.rates.COP;
       }
 
-      setRates({
-        usd_bcv: bcvUsd || 500.46, 
-        usd_paralelo: paraleloUsd || (bcvUsd ? bcvUsd * 1.15 : 575.52),
-        eur_bcv: bcvEur || 589.27,
-        eur_paralelo: paraleloEur || (bcvEur ? bcvEur * 1.15 : 677.66),
-        cop: usdToCop,
-      });
+      // Intentar cargar de localStorage como respaldo dinámico si todo falla
+      const cachedRates = JSON.parse(localStorage.getItem('venRatesCache')) || {};
+      
+      const finalRates = {
+        usd_bcv: bcvUsd || cachedRates.usd_bcv || 500.46, 
+        usd_paralelo: paraleloUsd || cachedRates.usd_paralelo || (bcvUsd ? bcvUsd * 1.15 : 575.52),
+        eur_bcv: bcvEur || cachedRates.eur_bcv || 589.27,
+        eur_paralelo: paraleloEur || cachedRates.eur_paralelo || (bcvEur ? bcvEur * 1.15 : 677.66),
+        cop: usdToCop || cachedRates.cop || 3701,
+      };
+
+      setRates(finalRates);
+      
+      // Si la carga fue exitosa, guardamos en la memoria del navegador (localStorage)
+      if (bcvUsd || paraleloUsd) {
+        localStorage.setItem('venRatesCache', JSON.stringify(finalRates));
+      }
 
       const date = new Date();
-      setLastUpdate(date.toLocaleString('es-VE', {
+      const timeString = date.toLocaleString('es-VE', {
         timeZone: 'America/Caracas',
         day: 'numeric',
         month: 'long',
         hour: '2-digit',
         minute: '2-digit',
-      }));
+      });
+      
+      const finalLastUpdate = (bcvUsd || paraleloUsd) ? timeString : (localStorage.getItem('venLastUpdate') || timeString);
+      setLastUpdate(finalLastUpdate);
+      
+      if (bcvUsd || paraleloUsd) {
+        localStorage.setItem('venLastUpdate', finalLastUpdate);
+      }
+
       setLoading(false);
     } catch (err) {
       console.error("Critical error fetching rates:", err);
