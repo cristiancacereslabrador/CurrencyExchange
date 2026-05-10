@@ -34,7 +34,7 @@ body::before {
   position: fixed;
   inset: 0;
   background: var(--bg-dark);
-  opacity: 0.88;
+  opacity: 0.65;
   z-index: -1;
 }
 
