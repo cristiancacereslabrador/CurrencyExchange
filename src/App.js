@@ -45,7 +45,7 @@ const App = () => {
       // 1. Primary Source: BCV Scraper (Direct from website)
       try {
         const bcvProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent("https://www.bcv.org.ve/")}`;
-        const bcvRes = await axios.get(bcvProxyUrl);
+        const bcvRes = await axios.get(bcvProxyUrl, { timeout: 4000 });
         const html = bcvRes.data.contents;
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
@@ -84,9 +84,9 @@ const App = () => {
 
       setRates({
         usd_bcv: bcvUsd || 500.46, 
-        usd_paralelo: paraleloUsd || (bcvUsd * 1.15),
+        usd_paralelo: paraleloUsd || (bcvUsd ? bcvUsd * 1.15 : 575.52),
         eur_bcv: bcvEur || 589.27,
-        eur_paralelo: paraleloEur || (bcvEur * 1.15),
+        eur_paralelo: paraleloEur || (bcvEur ? bcvEur * 1.15 : 677.66),
         cop: usdToCop,
       });
 
@@ -123,6 +123,10 @@ const App = () => {
     
     const currentUsdRate = (useParalelo ? rates.usd_paralelo : rates.usd_bcv) || 1;
     const currentEurRate = (useParalelo ? rates.eur_paralelo : rates.eur_bcv) || 1;
+    
+    // Tasa Cúcuta: En paralelo, el peso suele valer menos en bolívares en la frontera que el cruce internacional directo.
+    // Aplicamos un factor de castigo común (aprox 15% menos de valor del peso frente al bolívar)
+    const currentCopRate = useParalelo ? rates.cop * 1.15 : rates.cop;
 
     let newValues = { ...values, [field]: value }; // Keep user input as is (could have comma)
 
@@ -135,19 +139,19 @@ const App = () => {
       const usdVal = num / currentUsdRate;
       newValues.usd = formatValue(usdVal.toFixed(2));
       newValues.eur = formatValue((num / currentEurRate).toFixed(2));
-      newValues.cop = (usdVal * rates.cop).toFixed(0);
+      newValues.cop = (usdVal * currentCopRate).toFixed(0);
     } else if (field === "usd") {
       const bsVal = num * currentUsdRate;
       newValues.bs = formatValue(bsVal.toFixed(2));
       newValues.eur = formatValue((bsVal / currentEurRate).toFixed(2));
-      newValues.cop = (num * rates.cop).toFixed(0);
+      newValues.cop = (num * currentCopRate).toFixed(0);
     } else if (field === "eur") {
       const bsVal = num * currentEurRate;
       newValues.bs = formatValue(bsVal.toFixed(2));
       newValues.usd = formatValue((bsVal / currentUsdRate).toFixed(2));
-      newValues.cop = ((bsVal / currentUsdRate) * rates.cop).toFixed(0);
+      newValues.cop = ((bsVal / currentUsdRate) * currentCopRate).toFixed(0);
     } else if (field === "cop") {
-      const usdVal = num / rates.cop;
+      const usdVal = num / currentCopRate;
       const bsVal = usdVal * currentUsdRate;
       newValues.usd = formatValue(usdVal.toFixed(2));
       newValues.bs = formatValue(bsVal.toFixed(2));
@@ -190,7 +194,7 @@ const App = () => {
         <header className="app-header">
           <div className="logo-section">
             <ArrowRightLeft className="logo-icon" size={32} />
-            <h1>VenExchange Pro</h1>
+            <h1>VenCambioMoneda</h1>
           </div>
           <div className="header-buttons">
             <button className="clear-btn" onClick={clearValues} title="Borrar valores">
@@ -269,12 +273,12 @@ const App = () => {
               <span className="stat-value">= {formatValue((useParalelo ? rates.eur_paralelo : rates.eur_bcv).toFixed(2))} Bs.</span>
             </div>
             <div className="stat-item">
-              <span className="stat-name">1 PESO (COP)</span>
-              <span className="stat-value">= {formatValue(((useParalelo ? rates.usd_paralelo : rates.usd_bcv) / rates.cop).toFixed(4))} Bs.</span>
+              <span className="stat-name">1 PESO {useParalelo ? "(CÚCUTA)" : "(COP)"}</span>
+              <span className="stat-value">= {formatValue(((useParalelo ? rates.usd_paralelo : rates.usd_bcv) / (useParalelo ? rates.cop * 1.15 : rates.cop)).toFixed(4))} Bs.</span>
             </div>
             <div className="stat-item">
               <span className="stat-name">1 DÓLAR (USD)</span>
-              <span className="stat-value">= {rates.cop.toFixed(0)} COP</span>
+              <span className="stat-value">= {(useParalelo ? rates.cop * 1.15 : rates.cop).toFixed(0)} COP</span>
             </div>
           </div>
         </section>
