@@ -42,45 +42,47 @@ const App = () => {
     try {
       let bcvUsd = 0, paraleloUsd = 0, bcvEur = 0, paraleloEur = 0;
 
-      // 1. Primary Source: BCV Scraper (Direct from website)
-      try {
-        const bcvProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent("https://www.bcv.org.ve/")}`;
-        const bcvRes = await axios.get(bcvProxyUrl, { timeout: 4000 });
-        const html = bcvRes.data.contents;
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        
-        const parseBcvRate = (id) => {
-          const text = doc.querySelector(`${id} strong`)?.textContent || "0";
-          return parseFloat(text.replace(",", "."));
-        };
+      const apiTimeout = { timeout: 3500 };
+      const bcvProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent("https://www.bcv.org.ve/")}`;
 
-        bcvUsd = parseBcvRate("#dolar");
-        bcvEur = parseBcvRate("#euro");
-      } catch (scrapeErr) {
-        console.warn("BCV Scraper failed, using DolarAPI as fallback", scrapeErr);
+      // Run everything in parallel to drastically speed up loading
+      const [bcvReq, uOfiReq, uParaReq, eOfiReq, eParaReq, copReq] = await Promise.allSettled([
+        axios.get(bcvProxyUrl, apiTimeout),
+        axios.get("https://ve.dolarapi.com/v1/dolares/oficial", apiTimeout),
+        axios.get("https://ve.dolarapi.com/v1/dolares/paralelo", apiTimeout),
+        axios.get("https://ve.dolarapi.com/v1/euros/oficial", apiTimeout),
+        axios.get("https://ve.dolarapi.com/v1/euros/paralelo", apiTimeout),
+        axios.get("https://api.exchangerate-api.com/v4/latest/USD", apiTimeout)
+      ]);
+
+      // 1. Parse BCV Scraper (Highest Priority for Official)
+      if (bcvReq.status === "fulfilled") {
+        try {
+          const html = bcvReq.value.data.contents;
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+          const parseBcvRate = (id) => {
+            const text = doc.querySelector(`${id} strong`)?.textContent || "0";
+            return parseFloat(text.replace(",", "."));
+          };
+          bcvUsd = parseBcvRate("#dolar");
+          bcvEur = parseBcvRate("#euro");
+        } catch (e) {
+          console.warn("Could not parse BCV HTML");
+        }
       }
 
-      // 2. Parallel Rates and Fallback for Official
-      try {
-        const [uOfi, uPara, eOfi, ePara] = await Promise.allSettled([
-          axios.get("https://ve.dolarapi.com/v1/dolares/oficial"),
-          axios.get("https://ve.dolarapi.com/v1/dolares/paralelo"),
-          axios.get("https://ve.dolarapi.com/v1/euros/oficial"),
-          axios.get("https://ve.dolarapi.com/v1/euros/paralelo")
-        ]);
-        
-        if (!bcvUsd && uOfi.status === "fulfilled") bcvUsd = uOfi.value.data.promedio;
-        if (uPara.status === "fulfilled") paraleloUsd = uPara.value.data.promedio;
-        if (!bcvEur && eOfi.status === "fulfilled") bcvEur = eOfi.value.data.promedio;
-        if (ePara.status === "fulfilled") paraleloEur = ePara.value.data.promedio;
-      } catch (apiErr) {
-        console.warn("DolarAPI failed", apiErr);
-      }
+      // 2. Parse DolarAPI (Fallback for Official, Primary for Paralelo)
+      if (!bcvUsd && uOfiReq.status === "fulfilled") bcvUsd = uOfiReq.value.data.promedio;
+      if (uParaReq.status === "fulfilled") paraleloUsd = uParaReq.value.data.promedio;
+      if (!bcvEur && eOfiReq.status === "fulfilled") bcvEur = eOfiReq.value.data.promedio;
+      if (eParaReq.status === "fulfilled") paraleloEur = eParaReq.value.data.promedio;
 
-      // 3. Fetch COP rate
-      const copRes = await axios.get("https://api.exchangerate-api.com/v4/latest/USD");
-      const usdToCop = copRes.data.rates.COP;
+      // 3. Parse COP
+      let usdToCop = 3701; // Default fallback
+      if (copReq.status === "fulfilled") {
+        usdToCop = copReq.value.data.rates.COP;
+      }
 
       setRates({
         usd_bcv: bcvUsd || 500.46, 
