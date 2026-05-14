@@ -36,6 +36,13 @@ const App = () => {
     cop: "",
   });
 
+  const [rateValues, setRateValues] = useState({
+    usd: "",
+    eur: "",
+    peso_bs: "",
+    cop: ""
+  });
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -96,6 +103,17 @@ const App = () => {
       };
 
       setRates(finalRates);
+      
+      // Update string values for inputs
+      const currentUsd = useParalelo ? finalRates.usd_paralelo : finalRates.usd_bcv;
+      const currentEur = useParalelo ? finalRates.eur_paralelo : finalRates.eur_bcv;
+      const currentCop = useParalelo ? finalRates.cop * 1.15 : finalRates.cop;
+      setRateValues({
+        usd: currentUsd.toFixed(2),
+        eur: currentEur.toFixed(2),
+        peso_bs: (currentUsd / currentCop).toFixed(4),
+        cop: currentCop.toFixed(0)
+      });
       
       // Si la carga fue exitosa, guardamos en la memoria del navegador (localStorage)
       if (bcvUsd || paraleloUsd) {
@@ -202,24 +220,26 @@ const App = () => {
   }, [rates, useParalelo, convert]);
 
   const handleRateEdit = (type, value) => {
-    const cleanValue = value.replace(/,/g, ".");
+    // Permitir que el usuario borre y escriba libremente (usamos el valor de texto)
+    const displayValue = value.replace(/[^0-9.,]/g, "");
+    setRateValues(prev => ({ ...prev, [type]: displayValue }));
+
+    const cleanValue = displayValue.replace(/,/g, ".");
     const num = parseFloat(cleanValue) || 0;
     
-    if (num <= 0) return;
-
-    if (type === 'usd') {
-      setRates(prev => ({ ...prev, [useParalelo ? 'usd_paralelo' : 'usd_bcv']: num }));
-    } else if (type === 'eur') {
-      setRates(prev => ({ ...prev, [useParalelo ? 'eur_paralelo' : 'eur_bcv']: num }));
-    } else if (type === 'cop') {
-      // If editing USD to COP directly
-      setRates(prev => ({ ...prev, cop: useParalelo ? num / 1.15 : num }));
-    } else if (type === 'peso_bs') {
-      // If editing 1 Peso = X Bs.
-      // 1 Peso = USD_BS / COP_RATE => COP_RATE = USD_BS / X
-      const currentUsdRate = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
-      const newCopRate = currentUsdRate / num;
-      setRates(prev => ({ ...prev, cop: useParalelo ? newCopRate / 1.15 : newCopRate }));
+    // Solo actualizar las tasas reales si el número es válido y mayor a 0
+    if (num > 0) {
+      if (type === 'usd') {
+        setRates(prev => ({ ...prev, [useParalelo ? 'usd_paralelo' : 'usd_bcv']: num }));
+      } else if (type === 'eur') {
+        setRates(prev => ({ ...prev, [useParalelo ? 'eur_paralelo' : 'eur_bcv']: num }));
+      } else if (type === 'cop') {
+        setRates(prev => ({ ...prev, cop: useParalelo ? num / 1.15 : num }));
+      } else if (type === 'peso_bs') {
+        const currentUsdRate = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
+        const newCopRate = currentUsdRate / num;
+        setRates(prev => ({ ...prev, cop: useParalelo ? newCopRate / 1.15 : newCopRate }));
+      }
     }
   };
 
@@ -235,6 +255,20 @@ const App = () => {
 
   const toggleRateType = () => {
     setUseParalelo(!useParalelo);
+    
+    // Update rate inputs strings when switching
+    const nextParalelo = !useParalelo;
+    const currentUsd = nextParalelo ? rates.usd_paralelo : rates.usd_bcv;
+    const currentEur = nextParalelo ? rates.eur_paralelo : rates.eur_bcv;
+    const currentCop = nextParalelo ? rates.cop * 1.15 : rates.cop;
+    
+    setRateValues({
+      usd: currentUsd.toFixed(2),
+      eur: currentEur.toFixed(2),
+      peso_bs: (currentUsd / currentCop).toFixed(4),
+      cop: currentCop.toFixed(0)
+    });
+
     // Recalculate based on current USD value if it exists
     if (values.usd) {
       const usd = parseFloat(values.usd) || 0;
@@ -332,7 +366,7 @@ const App = () => {
                 = <input 
                     type="text" 
                     className="stat-input"
-                    value={formatValue((useParalelo ? rates.usd_paralelo : rates.usd_bcv).toFixed(2))}
+                    value={rateValues.usd}
                     onChange={(e) => handleRateEdit('usd', e.target.value)}
                   />
                 <span className="stat-unit">Bs.</span>
@@ -344,7 +378,7 @@ const App = () => {
                 = <input 
                     type="text" 
                     className="stat-input"
-                    value={formatValue((useParalelo ? rates.eur_paralelo : rates.eur_bcv).toFixed(2))}
+                    value={rateValues.eur}
                     onChange={(e) => handleRateEdit('eur', e.target.value)}
                   />
                 <span className="stat-unit">Bs.</span>
@@ -356,7 +390,7 @@ const App = () => {
                 = <input 
                     type="text" 
                     className="stat-input"
-                    value={formatValue(((useParalelo ? rates.usd_paralelo : rates.usd_bcv) / (useParalelo ? rates.cop * 1.15 : rates.cop)).toFixed(4))}
+                    value={rateValues.peso_bs}
                     onChange={(e) => handleRateEdit('peso_bs', e.target.value)}
                   />
                 <span className="stat-unit">Bs.</span>
@@ -368,7 +402,7 @@ const App = () => {
                 = <input 
                     type="text" 
                     className="stat-input"
-                    value={(useParalelo ? rates.cop * 1.15 : rates.cop).toFixed(0)}
+                    value={rateValues.cop}
                     onChange={(e) => handleRateEdit('cop', e.target.value)}
                   />
                 <span className="stat-unit">COP</span>
