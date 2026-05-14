@@ -43,7 +43,7 @@ const App = () => {
     cop: ""
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -104,17 +104,6 @@ const App = () => {
 
       setRates(finalRates);
       
-      // Update string values for inputs
-      const currentUsd = useParalelo ? finalRates.usd_paralelo : finalRates.usd_bcv;
-      const currentEur = useParalelo ? finalRates.eur_paralelo : finalRates.eur_bcv;
-      const currentCop = useParalelo ? finalRates.cop * 1.15 : finalRates.cop;
-      setRateValues({
-        usd: currentUsd.toFixed(2),
-        eur: currentEur.toFixed(2),
-        peso_bs: (currentUsd / currentCop).toFixed(4),
-        cop: currentCop.toFixed(0)
-      });
-      
       // Si la carga fue exitosa, guardamos en la memoria del navegador (localStorage)
       if (bcvUsd || paraleloUsd) {
         localStorage.setItem('venRatesCache', JSON.stringify(finalRates));
@@ -142,11 +131,27 @@ const App = () => {
       setError("Error al conectar con los servicios de tasa. Usando datos guardados.");
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
+
+  // Sync rate inputs when rates or type changes
+  useEffect(() => {
+    const currentUsd = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
+    const currentEur = useParalelo ? rates.eur_paralelo : rates.eur_bcv;
+    const currentCop = useParalelo ? rates.cop * 1.15 : rates.cop;
+    
+    // Solo actualizar si el usuario no tiene el foco en ningún input de tasa
+    // (o simplemente confiar en que rates solo cambia por acciones externas o Blur)
+    setRateValues({
+      usd: currentUsd.toFixed(2),
+      eur: currentEur.toFixed(2),
+      peso_bs: (currentUsd / currentCop).toFixed(4),
+      cop: currentCop.toFixed(0)
+    });
+  }, [rates, useParalelo]);
 
   const formatValue = (val) => {
     if (!val) return "";
@@ -271,19 +276,6 @@ const App = () => {
 
   const toggleRateType = () => {
     setUseParalelo(!useParalelo);
-    
-    // Update rate inputs strings when switching
-    const nextParalelo = !useParalelo;
-    const currentUsd = nextParalelo ? rates.usd_paralelo : rates.usd_bcv;
-    const currentEur = nextParalelo ? rates.eur_paralelo : rates.eur_bcv;
-    const currentCop = nextParalelo ? rates.cop * 1.15 : rates.cop;
-    
-    setRateValues({
-      usd: currentUsd.toFixed(2),
-      eur: currentEur.toFixed(2),
-      peso_bs: (currentUsd / currentCop).toFixed(4),
-      cop: currentCop.toFixed(0)
-    });
 
     // Recalculate based on current USD value if it exists
     if (values.usd) {
@@ -451,4 +443,3 @@ const App = () => {
 };
 
 export default App;
-
