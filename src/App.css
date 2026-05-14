@@ -250,6 +250,35 @@ body::before {
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  width: 70px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.stat-input:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 5px rgba(34, 197, 94, 0.3);
+}
+
+.stat-unit {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 /* ── Footer ── */
