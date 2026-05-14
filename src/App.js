@@ -220,26 +220,42 @@ const App = () => {
   }, [rates, useParalelo, convert]);
 
   const handleRateEdit = (type, value) => {
-    // Permitir que el usuario borre y escriba libremente (usamos el valor de texto)
+    // Solo actualizamos el texto visual mientras escribe
     const displayValue = value.replace(/[^0-9.,]/g, "");
     setRateValues(prev => ({ ...prev, [type]: displayValue }));
+  };
 
-    const cleanValue = displayValue.replace(/,/g, ".");
+  const handleRateBlur = (type) => {
+    const value = rateValues[type];
+    const cleanValue = value.replace(/,/g, ".");
     const num = parseFloat(cleanValue) || 0;
     
-    // Solo actualizar las tasas reales si el número es válido y mayor a 0
-    if (num > 0) {
-      if (type === 'usd') {
-        setRates(prev => ({ ...prev, [useParalelo ? 'usd_paralelo' : 'usd_bcv']: num }));
-      } else if (type === 'eur') {
-        setRates(prev => ({ ...prev, [useParalelo ? 'eur_paralelo' : 'eur_bcv']: num }));
-      } else if (type === 'cop') {
-        setRates(prev => ({ ...prev, cop: useParalelo ? num / 1.15 : num }));
-      } else if (type === 'peso_bs') {
-        const currentUsdRate = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
-        const newCopRate = currentUsdRate / num;
-        setRates(prev => ({ ...prev, cop: useParalelo ? newCopRate / 1.15 : newCopRate }));
-      }
+    // Si el campo está vacío o es 0, restauramos el valor actual de las tasas
+    if (num <= 0) {
+      const currentUsd = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
+      const currentEur = useParalelo ? rates.eur_paralelo : rates.eur_bcv;
+      const currentCop = useParalelo ? rates.cop * 1.15 : rates.cop;
+      
+      setRateValues({
+        usd: currentUsd.toFixed(2),
+        eur: currentEur.toFixed(2),
+        peso_bs: (currentUsd / currentCop).toFixed(4),
+        cop: currentCop.toFixed(0)
+      });
+      return;
+    }
+
+    // Actualizar las tasas reales y disparar cálculos
+    if (type === 'usd') {
+      setRates(prev => ({ ...prev, [useParalelo ? 'usd_paralelo' : 'usd_bcv']: num }));
+    } else if (type === 'eur') {
+      setRates(prev => ({ ...prev, [useParalelo ? 'eur_paralelo' : 'eur_bcv']: num }));
+    } else if (type === 'cop') {
+      setRates(prev => ({ ...prev, cop: useParalelo ? num / 1.15 : num }));
+    } else if (type === 'peso_bs') {
+      const currentUsdRate = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
+      const newCopRate = currentUsdRate / num;
+      setRates(prev => ({ ...prev, cop: useParalelo ? newCopRate / 1.15 : newCopRate }));
     }
   };
 
@@ -368,6 +384,8 @@ const App = () => {
                     className="stat-input"
                     value={rateValues.usd}
                     onChange={(e) => handleRateEdit('usd', e.target.value)}
+                    onFocus={() => setRateValues(prev => ({ ...prev, usd: "" }))}
+                    onBlur={() => handleRateBlur('usd')}
                   />
                 <span className="stat-unit">Bs.</span>
               </div>
@@ -380,6 +398,8 @@ const App = () => {
                     className="stat-input"
                     value={rateValues.eur}
                     onChange={(e) => handleRateEdit('eur', e.target.value)}
+                    onFocus={() => setRateValues(prev => ({ ...prev, eur: "" }))}
+                    onBlur={() => handleRateBlur('eur')}
                   />
                 <span className="stat-unit">Bs.</span>
               </div>
@@ -392,6 +412,8 @@ const App = () => {
                     className="stat-input"
                     value={rateValues.peso_bs}
                     onChange={(e) => handleRateEdit('peso_bs', e.target.value)}
+                    onFocus={() => setRateValues(prev => ({ ...prev, peso_bs: "" }))}
+                    onBlur={() => handleRateBlur('peso_bs')}
                   />
                 <span className="stat-unit">Bs.</span>
               </div>
@@ -404,6 +426,8 @@ const App = () => {
                     className="stat-input"
                     value={rateValues.cop}
                     onChange={(e) => handleRateEdit('cop', e.target.value)}
+                    onFocus={() => setRateValues(prev => ({ ...prev, cop: "" }))}
+                    onBlur={() => handleRateBlur('cop')}
                   />
                 <span className="stat-unit">COP</span>
               </div>
