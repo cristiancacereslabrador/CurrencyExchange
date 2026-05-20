@@ -360,7 +360,7 @@ const App = () => {
           {/* Pesos Colombianos */}
           <div className="input-card cop-card">
             <div className="card-row">
-              <div className="card-label"><Globe size={13} /><span>COP</span></div>
+              <div className="card-label"><Globe size={13} /><span>PESOS</span></div>
               <input type="text" value={values.cop} onChange={(e) => handleInputChange("cop", e)} placeholder="0" inputMode="numeric" />
             </div>
           </div>
@@ -397,7 +397,7 @@ const App = () => {
               </div>
             </div>
             <div className="stat-item">
-              <span className="stat-name">1 PESO {useParalelo ? "(CÚCUTA)" : "(COP)"}</span>
+              <span className="stat-name">1 PESO {useParalelo ? "(CÚCUTA)" : "(PESOS)"}</span>
               <div className="stat-value">
                 = <input 
                     type="text" 
@@ -421,7 +421,7 @@ const App = () => {
                     onFocus={() => setRateValues(prev => ({ ...prev, cop: "" }))}
                     onBlur={() => handleRateBlur('cop')}
                   />
-                <span className="stat-unit">COP</span>
+                <span className="stat-unit">PESOS</span>
               </div>
             </div>
           </div>
