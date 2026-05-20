@@ -336,7 +336,7 @@ const App = () => {
           {/* Bolivares */}
           <div className="input-card bs-card">
             <div className="card-row">
-              <div className="card-label"><Coins size={13} /><span>Bs.</span></div>
+              <div className="card-label"><Coins size={13} /><span>BS.</span></div>
               <input type="text" value={values.bs} onChange={(e) => handleInputChange("bs", e)} placeholder="0,00" inputMode="decimal" />
             </div>
           </div>
@@ -379,7 +379,7 @@ const App = () => {
                     onFocus={() => setRateValues(prev => ({ ...prev, usd: "" }))}
                     onBlur={() => handleRateBlur('usd')}
                   />
-                <span className="stat-unit">Bs.</span>
+                <span className="stat-unit">BS.</span>
               </div>
             </div>
             <div className="stat-item">
@@ -393,7 +393,7 @@ const App = () => {
                     onFocus={() => setRateValues(prev => ({ ...prev, eur: "" }))}
                     onBlur={() => handleRateBlur('eur')}
                   />
-                <span className="stat-unit">Bs.</span>
+                <span className="stat-unit">BS.</span>
               </div>
             </div>
             <div className="stat-item">
@@ -407,7 +407,7 @@ const App = () => {
                     onFocus={() => setRateValues(prev => ({ ...prev, peso_bs: "" }))}
                     onBlur={() => handleRateBlur('peso_bs')}
                   />
-                <span className="stat-unit">Bs.</span>
+                <span className="stat-unit">BS.</span>
               </div>
             </div>
             <div className="stat-item">
