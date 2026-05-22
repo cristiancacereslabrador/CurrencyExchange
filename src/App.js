@@ -141,7 +141,7 @@ const App = () => {
   useEffect(() => {
     const currentUsd = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
     const currentEur = useParalelo ? rates.eur_paralelo : rates.eur_bcv;
-    const currentCop = useParalelo ? rates.cop * 0.85 : rates.cop;
+    const currentCop = useParalelo ? rates.cop * 0.95 : rates.cop;
     
     // Solo actualizar si el usuario no tiene el foco en ningún input de tasa
     // (o simplemente confiar en que rates solo cambia por acciones externas o Blur)
@@ -168,8 +168,8 @@ const App = () => {
     const currentEurRate = (useParalelo ? rates.eur_paralelo : rates.eur_bcv) || 1;
     
     // Tasa Cúcuta: En paralelo, el peso suele valer menos en bolívares en la frontera que el cruce internacional directo.
-    // Aplicamos un factor de castigo común (aprox 15% menos de valor del peso frente al bolívar)
-    const currentCopRate = useParalelo ? rates.cop * 0.85 : rates.cop;
+    // Aplicamos un factor de castigo común (aprox 5% menos de valor del peso frente al bolívar)
+    const currentCopRate = useParalelo ? rates.cop * 0.95 : rates.cop;
 
     if (num === 0 && !value.includes(",")) {
       setValues({ bs: "", usd: "", eur: "", cop: "" });
@@ -239,7 +239,7 @@ const App = () => {
     if (num <= 0) {
       const currentUsd = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
       const currentEur = useParalelo ? rates.eur_paralelo : rates.eur_bcv;
-      const currentCop = useParalelo ? rates.cop * 0.85 : rates.cop;
+      const currentCop = useParalelo ? rates.cop * 0.95 : rates.cop;
       
       setRateValues({
         usd: currentUsd.toFixed(2),
@@ -256,11 +256,11 @@ const App = () => {
     } else if (type === 'eur') {
       setRates(prev => ({ ...prev, [useParalelo ? 'eur_paralelo' : 'eur_bcv']: num }));
     } else if (type === 'cop') {
-      setRates(prev => ({ ...prev, cop: useParalelo ? num / 0.85 : num }));
+      setRates(prev => ({ ...prev, cop: useParalelo ? num / 0.95 : num }));
     } else if (type === 'peso_bs') {
       const currentUsdRate = useParalelo ? rates.usd_paralelo : rates.usd_bcv;
       const newCopRate = currentUsdRate / num;
-      setRates(prev => ({ ...prev, cop: useParalelo ? newCopRate / 0.85 : newCopRate }));
+      setRates(prev => ({ ...prev, cop: useParalelo ? newCopRate / 0.95 : newCopRate }));
     }
   };
 
