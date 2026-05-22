@@ -29,6 +29,7 @@ const App = () => {
   const [useParalelo, setUseParalelo] = useState(false);
 
   // Conversion state
+  const [lastEditedField, setLastEditedField] = useState("usd");
   const [values, setValues] = useState({
     bs: "",
     usd: "",
@@ -210,19 +211,14 @@ const App = () => {
     valuesRef.current = values;
   }, [values]);
 
-  // Recalculate when rates change
+  // Recalculate when rates change or toggle rate type
   useEffect(() => {
     const currentValues = valuesRef.current;
-    if (currentValues.usd) {
-      convert("usd", currentValues.usd);
-    } else if (currentValues.bs) {
-      convert("bs", currentValues.bs);
-    } else if (currentValues.eur) {
-      convert("eur", currentValues.eur);
-    } else if (currentValues.cop) {
-      convert("cop", currentValues.cop);
+    const valueToConvert = currentValues[lastEditedField];
+    if (valueToConvert) {
+      convert(lastEditedField, valueToConvert);
     }
-  }, [rates, useParalelo, convert]);
+  }, [rates, useParalelo, lastEditedField, convert]);
 
   const handleRateEdit = (type, value) => {
     // Solo actualizamos el texto visual mientras escribe
@@ -267,29 +263,17 @@ const App = () => {
 
   const handleInputChange = (field, e) => {
     const val = e.target.value.replace(/[^0-9.,]/g, "");
+    setLastEditedField(field);
     convert(field, val);
   };
 
   const clearValues = () => {
+    setLastEditedField("usd");
     setValues({ bs: "", usd: "", eur: "", cop: "" });
   };
 
   const toggleRateType = () => {
     setUseParalelo(!useParalelo);
-
-    // Recalculate based on current USD value if it exists
-    if (values.usd) {
-      const usd = parseFloat(values.usd) || 0;
-      const currentUsdRate = !useParalelo ? rates.usd_paralelo : rates.usd_bcv;
-      const currentEurRate = !useParalelo ? rates.eur_paralelo : rates.eur_bcv;
-      
-      const bsVal = usd * currentUsdRate;
-      setValues(prev => ({
-        ...prev,
-        bs: bsVal.toFixed(2),
-        eur: (bsVal / currentEurRate).toFixed(2)
-      }));
-    }
   };
 
   return (
