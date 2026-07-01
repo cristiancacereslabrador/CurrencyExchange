@@ -20,6 +20,7 @@ const App = () => {
     eur_bcv: 0,
     eur_paralelo: 0,
     cop: 0,
+    usdt: 0,
   });
 
   // UI state
@@ -35,6 +36,7 @@ const App = () => {
     usd: "",
     eur: "",
     cop: "",
+    usdt: "",
   });
 
   const [rateValues, setRateValues] = useState({
@@ -54,13 +56,14 @@ const App = () => {
       const bcvProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent("https://www.bcv.org.ve/")}`;
 
       // Run everything in parallel to drastically speed up loading
-      const [bcvReq, uOfiReq, uParaReq, eOfiReq, eParaReq, copReq] = await Promise.allSettled([
+      const [bcvReq, uOfiReq, uParaReq, eOfiReq, eParaReq, copReq, usdtReq] = await Promise.allSettled([
         axios.get(bcvProxyUrl, apiTimeout),
         axios.get("https://ve.dolarapi.com/v1/dolares/oficial", apiTimeout),
         axios.get("https://ve.dolarapi.com/v1/dolares/paralelo", apiTimeout),
         axios.get("https://ve.dolarapi.com/v1/euros/oficial", apiTimeout),
         axios.get("https://ve.dolarapi.com/v1/euros/paralelo", apiTimeout),
-        axios.get("https://api.exchangerate-api.com/v4/latest/USD", apiTimeout)
+        axios.get("https://api.exchangerate-api.com/v4/latest/USD", apiTimeout),
+        axios.get("https://www.usdt.com.ve/api/v1/rates/current", apiTimeout)
       ]);
 
       // 1. Parse BCV Scraper (Highest Priority for Official)
@@ -92,6 +95,12 @@ const App = () => {
         usdToCop = copReq.value.data.rates.COP;
       }
 
+      // 4. Parse USDT
+      let usdtRate = null;
+      if (usdtReq.status === "fulfilled" && usdtReq.value.data && usdtReq.value.data.success) {
+        usdtRate = usdtReq.value.data.data.best?.buy_rate || usdtReq.value.data.data.binance?.buy_rate;
+      }
+
       // Intentar cargar de localStorage como respaldo dinámico si todo falla
       const cachedRates = JSON.parse(localStorage.getItem('venRatesCache')) || {};
       
@@ -101,12 +110,13 @@ const App = () => {
         eur_bcv: bcvEur || cachedRates.eur_bcv || 589.27,
         eur_paralelo: paraleloEur || cachedRates.eur_paralelo || (bcvEur ? bcvEur * 1.15 : 677.66),
         cop: usdToCop || cachedRates.cop || 3701,
+        usdt: usdtRate || cachedRates.usdt || paraleloUsd || bcvUsd || 700.00,
       };
 
       setRates(finalRates);
       
       // Si la carga fue exitosa, guardamos en la memoria del navegador (localStorage)
-      if (bcvUsd || paraleloUsd) {
+      if (bcvUsd || paraleloUsd || usdtRate) {
         localStorage.setItem('venRatesCache', JSON.stringify(finalRates));
       }
 
@@ -167,13 +177,14 @@ const App = () => {
     
     const currentUsdRate = (useParalelo ? rates.usd_paralelo : rates.usd_bcv) || 1;
     const currentEurRate = (useParalelo ? rates.eur_paralelo : rates.eur_bcv) || 1;
+    const currentUsdtRate = rates.usdt || (useParalelo ? rates.usd_paralelo : rates.usd_bcv) || 1;
     
     // Tasa Cúcuta: En paralelo, el peso suele valer menos en bolívares en la frontera que el cruce internacional directo.
     // Aplicamos un factor de castigo común (aprox 5% menos de valor del peso frente al bolívar)
     const currentCopRate = useParalelo ? rates.cop * 0.95 : rates.cop;
 
     if (num === 0 && !value.includes(",")) {
-      setValues({ bs: "", usd: "", eur: "", cop: "" });
+      setValues({ bs: "", usd: "", eur: "", cop: "", usdt: "" });
       return;
     }
 
@@ -185,22 +196,33 @@ const App = () => {
         newValues.usd = formatValue(usdVal.toFixed(2));
         newValues.eur = formatValue((num / currentEurRate).toFixed(2));
         newValues.cop = (usdVal * currentCopRate).toFixed(0);
+        newValues.usdt = formatValue((num / currentUsdtRate).toFixed(2));
       } else if (field === "usd") {
         const bsVal = num * currentUsdRate;
         newValues.bs = formatValue(bsVal.toFixed(2));
         newValues.eur = formatValue((bsVal / currentEurRate).toFixed(2));
         newValues.cop = (num * currentCopRate).toFixed(0);
+        newValues.usdt = formatValue(num.toFixed(2));
       } else if (field === "eur") {
         const bsVal = num * currentEurRate;
         newValues.bs = formatValue(bsVal.toFixed(2));
         newValues.usd = formatValue((bsVal / currentUsdRate).toFixed(2));
         newValues.cop = ((bsVal / currentUsdRate) * currentCopRate).toFixed(0);
+        newValues.usdt = formatValue((bsVal / currentUsdtRate).toFixed(2));
       } else if (field === "cop") {
         const usdVal = num / currentCopRate;
         const bsVal = usdVal * currentUsdRate;
         newValues.usd = formatValue(usdVal.toFixed(2));
         newValues.bs = formatValue(bsVal.toFixed(2));
         newValues.eur = formatValue((bsVal / currentEurRate).toFixed(2));
+        newValues.usdt = formatValue((bsVal / currentUsdtRate).toFixed(2));
+      } else if (field === "usdt") {
+        const usdVal = num;
+        const bsVal = num * currentUsdtRate;
+        newValues.usd = formatValue(usdVal.toFixed(2));
+        newValues.bs = formatValue(bsVal.toFixed(2));
+        newValues.eur = formatValue(((usdVal * currentUsdRate) / currentEurRate).toFixed(2));
+        newValues.cop = (usdVal * currentCopRate).toFixed(0);
       }
       return newValues;
     });
@@ -269,7 +291,7 @@ const App = () => {
 
   const clearValues = () => {
     setLastEditedField("usd");
-    setValues({ bs: "", usd: "", eur: "", cop: "" });
+    setValues({ bs: "", usd: "", eur: "", cop: "", usdt: "" });
   };
 
   const toggleRateType = () => {
@@ -330,6 +352,14 @@ const App = () => {
             <div className="card-row">
               <div className="card-label"><DollarSign size={13} /><span>USD</span></div>
               <input type="text" value={values.usd} onChange={(e) => handleInputChange("usd", e)} placeholder="0,00" inputMode="decimal" />
+            </div>
+          </div>
+
+          {/* USDT */}
+          <div className="input-card usdt-card">
+            <div className="card-row">
+              <div className="card-label"><DollarSign size={13} /><span>USDT</span></div>
+              <input type="text" value={values.usdt} onChange={(e) => handleInputChange("usdt", e)} placeholder="0,00" inputMode="decimal" />
             </div>
           </div>
 
@@ -406,6 +436,13 @@ const App = () => {
                     onBlur={() => handleRateBlur('cop')}
                   />
                 <span className="stat-unit">PESOS</span>
+              </div>
+            </div>
+            <div className="stat-item">
+              <span className="stat-name">1 USDT (BINANCE P2P)</span>
+              <div className="stat-value">
+                = <span className="stat-readonly-value">{formatValue(rates.usdt ? rates.usdt.toFixed(2) : "0,00")}</span>
+                <span className="stat-unit">BS.</span>
               </div>
             </div>
           </div>
